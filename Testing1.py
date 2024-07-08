@@ -6,6 +6,10 @@ url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 
 class AtlasCliente:
     def __init__(self, url, dbname):
+        print("┌────────────────────────────┐")
+        print("│  🧙‍♂️ Prototipo Juego Rol  ⚔️  │")
+        print("└────────────────────────────┘")
+
         nombreusuario = input("Username: ")
         contrasena = getpass("Password: ")  
         updated_url = url.replace("<username>:<password>", f"{nombreusuario}:{contrasena}")
