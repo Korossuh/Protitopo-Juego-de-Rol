@@ -1,3 +1,7 @@
+from pymongo import MongoClient
+from getpass import getpass
+url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
+
 class TypeAccount:
     def __init__(self):
         print("┌────────────────────────────┐")
