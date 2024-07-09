@@ -33,7 +33,19 @@ class AtlasCliente(AtlasBase):
     pass
 
 class AtlasGameMaster(AtlasBase):
-    pass
+    def AgregarEstado(self):
+        coleccion = self.basededatos['Estados']
+        while True: 
+            print("Si desea agregar un estado, ingrese primero el nombre y descripcion del estado.")
+            nombre = input("Ingrese el nombre: ")
+            descripcion = input("Ingrese la descripción: ")
+            
+            datos_ingreso = {'Nombre': nombre, 'Descripcion': descripcion}
+            result = coleccion.insert_one(datos_ingreso)  # Store the result of the insert operation
+            print(f"Estado agregado con ID: {result.inserted_id}")
+            continuar = input("¿Desea agregar otro estado? (s/n): ")
+            if continuar.lower() != 's':
+                break
 class TypeAccount:
     def __init__(self):
         print("┌────────────────────────────┐")
@@ -56,4 +68,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.ping()
+GameMaster1.user.AgregarEstado()
