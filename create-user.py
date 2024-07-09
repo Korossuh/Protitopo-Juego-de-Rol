@@ -15,6 +15,10 @@ class FormularioCreacion:
             
             if any(caracter in string.punctuation for caracter in self.nombre):
                 print("Recuerde que no debe ingresar caracteres especiales.")
+            elif self.nombre == "homosexual":
+                print("No seas gei")
+            elif self.nombre == "Homosexual":
+                print("No seas gei")
             else:
                 print(f"El nombre '{self.nombre}' está correcto.")
                 ban = False
