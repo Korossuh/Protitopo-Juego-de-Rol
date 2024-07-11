@@ -110,7 +110,47 @@ class AtlasGameMaster(AtlasBase):
             continuar = input("¿Desea agregar otro poder? (s/n): ")
             if continuar.lower() != 's':
                 break
+    def AgregarEquipamiento(self):
+        collecion = self.basededatos['Razas']
+        razas = list(collecion.find({},{"Nombre":1}))
+        coleccion = self.basededatos['Equipamiento']
+        while True: 
+            print("Si desea agregar equipamiento, ingrese primero el nombre y descripcion del estado.")
+            nombre = input("Ingrese el nombre: ")
+            descripcion = input("Ingrese la descripción: ")
+            Ranuras = []
+            Slots_disponibles=['Mano Derecha','Brazo Derecho','Mano Izquierda',
+                                'Brazo Izquierdo','Pie Derecho','Rodilla Derecha','Pie Izquierdo','Rodilla Izquierda',
+                                'Pecho','Cara','Cabeza']
+            while True:
+                for i,Slots_disponibles in enumerate(Slots_disponibles):
+                    print(f"{i+1}, {Slots_disponibles}")
+                    break;
 
+            
+            print("\nRazas disponibles:")
+            for i, raza in enumerate(razas):
+                print(f"{i+1}. {raza['Nombre']}")
+            
+            while True: 
+                try:
+                    eleccion_raza = int(input("Elija la raza a la que pertenece el poder (o 0 si no aplica): ")) - 1
+                    if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                        break  
+                    else:
+                        print("Opción inválida. Intente de nuevo.")
+                except ValueError:
+                    print("Por favor, ingrese un número.")
+            datos_ingreso = {'Nombre': nombre, 'Descripcion': descripcion}
+            if eleccion_raza != -1:  
+                datos_ingreso['Raza'] = razas[eleccion_raza]['_id'] 
+    
+            resultado = coleccion.insert_one(datos_ingreso)
+            print(f"Poder agregado con ID: {resultado.inserted_id}")
+
+            continuar = input("¿Desea agregar otro poder? (s/n): ")
+            if continuar.lower() != 's':
+                break
 
 class TypeAccount:
     def __init__(self):
@@ -134,4 +174,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.AgregarHabilidades()
+GameMaster1.user.AgregarEquipamiento()
