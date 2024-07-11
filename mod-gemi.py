@@ -39,8 +39,8 @@ class ModEquipmentUser:
         print("          |  O                ")
         print("          +--|---|            ")
         print("             |   |            ")
-        print("            / \               ")
-        print("          _/   \_             ")
+        print("            / \\              ")
+        print("          _/   \\_             ")
 
         for ranura, item in self.equipamiento_personaje.items():
             print(f"- {ranura}: {item}")
@@ -54,8 +54,8 @@ class ModEquipmentUser:
         print("          |  O                ")
         print("          +--|---|            ")
         print("             |   |            ")
-        print("            / \               ")
-        print("          _/   \_             ")
+        print("            / \\              ")
+        print("          _/   \\_             ")
 
         equipamiento_mod = list(self.equipamiento_personaje.keys())
         for i, equipameinto in enumerate(equipamiento_mod):
