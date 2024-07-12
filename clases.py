@@ -397,6 +397,67 @@ class AtlasGameMaster(AtlasBase):
                     nuevonombre = input("Ingrese el nombre: ")
                     resultado = collecion.update_one({"_id" : id_poder}, {'$set' : {"Nombre" : nuevonombre} } )
                     print("Poder Actualizado")
+            case "Habilidades":
+                coleccion = self.basededatos["Razas"]
+                razas = list(coleccion.find({},{"Nombre":1}))
+                collecion = self.basededatos["Habilidades"]
+                Habilidades = list(collecion.find({},{"_id":1,"Nombre": 1}))
+                print("Habilidades Existentes: (Seleccione el numero que va a modificar)")
+                for i, habilidad in enumerate(Habilidades):
+                    print(f"{i+1}. {habilidad['Nombre']}")
+                while True:
+                    try:
+                        eleccion_habilidad = int(input()) -1
+                        if 0 <= eleccion_habilidad < len(Habilidades):
+                            habilidad_seleccionada = Habilidades[eleccion_habilidad]
+                            id_habilidad = habilidad_seleccionada["_id"]
+                            break
+                        else: 
+                            print("Eleccion Invalida, por favor elija una habilidad valida ")
+                    except ValueError:
+                        print("Por favor, ingrese un numero valido")
+                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
+                if Decision == "4":
+                    nuevonombre = input("Ingrese el nuevo Nombre:")
+                    nuevadescripcion = input("Ingrese la nueva descripcion")
+                    for i, raza in enumerate(razas):
+                        print(f"{i+1}. {raza['Nombre']}")
+                    
+                    while True: 
+                        try:
+                            eleccion_raza = int(input("Elija la raza a la que va a pertenecer la habilidad")) - 1
+                            if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                break  
+                            else:
+                                print("Opción inválida. Intente de nuevo.")
+                        except ValueError:
+                            print("Por favor, ingrese un número.")
+                    
+                    resultado = collecion.update_one({"_id":id_habilidad}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
+                    print("Habilidad Actualizada:")
+                elif Decision == "3":
+                    for i, raza in enumerate(razas):
+                        print(f"{i+1}. {raza['Nombre']}")
+                    
+                        while True: 
+                            try:
+                                eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                                if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                    break  
+                                else:
+                                    print("Opción inválida. Intente de nuevo.")
+                            except ValueError:
+                                print("Por favor, ingrese un número.")
+                    resultado = collecion.update_one({"_id": id_habilidad}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
+                elif Decision == '2':
+                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                    resultado = collecion.update_one({"_id": id_habilidad}, {"$set": {"Descripcion" : nuevadescripcion} })
+                    print("Habilidad Actualizada")
+                elif Decision == '1':
+                    nuevonombre = input("Ingrese el nombre: ")
+                    resultado = collecion.update_one({"_id" : id_habilidad}, {'$set' : {"Nombre" : nuevonombre} } )
+                    print("Habilidad Actu")
+
 
 
 
@@ -423,4 +484,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Modificar("Poder")
+GameMaster1.user.Modificar("Habilidades")
