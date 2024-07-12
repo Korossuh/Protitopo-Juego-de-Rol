@@ -342,7 +342,7 @@ class AtlasGameMaster(AtlasBase):
                 razas = list(coleccion.find({},{"Nombre":1}))
                 collecion = self.basededatos["Poderes"]
                 Poderes = list(collecion.find({},{"_id":1,"Nombre": 1}))
-                print("Estados Existentes: (Seleccione el numero que va a modificar)")
+                print("Poderes Existentes: (Seleccione el numero que va a modificar)")
                 for i, poder in enumerate(Poderes):
                     print(f"{i+1}. {poder['Nombre']}")
                 while True:
@@ -356,6 +356,26 @@ class AtlasGameMaster(AtlasBase):
                             print("Eleccion Invalida, por favor elija un poder valido ")
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
+                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
+                if Decision == "4":
+                    nuevonombre = input("Ingrese el nuevo Nombre:")
+                    nuevadescripcion = input("Ingrese la nueva descripcion")
+                    for i, raza in enumerate(razas):
+                        print(f"{i+1}. {raza['Nombre']}")
+                    
+                    while True: 
+                        try:
+                            eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                            if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                break  
+                            else:
+                                print("Opción inválida. Intente de nuevo.")
+                        except ValueError:
+                            print("Por favor, ingrese un número.")
+                    
+                    resultado = collecion.update_one({"_id":id_poder}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
+                    print("Poder Actualizado:")
+
 
 
 class TypeAccount:
@@ -380,4 +400,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Modificar("Estado")
+GameMaster1.user.Modificar("Poder")
