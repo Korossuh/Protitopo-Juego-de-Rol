@@ -111,6 +111,7 @@ class AtlasGameMaster(AtlasBase):
             if continuar.lower() != 's':
                 break
     def AgregarEquipamiento(self):
+
         collecion = self.basededatos['Equipamiento']  # Corrección: Usar la colección de equipamiento
         self.equipamiento_personaje = {
             "Cabeza": "",
@@ -163,7 +164,19 @@ class AtlasGameMaster(AtlasBase):
             continuar = input("¿Desea agregar otro Equipamiento? (s/n): ")
             if continuar.lower() != 's':
                 break
+    def AgregarRaza(self):
+        coleccion = self.basededatos['Razas']
+        while True:
+            print("Ingrese Nombre y Descripcion de la Raza que va a ingresar")
+            nombre = input("Nombre:")
+            Descripcion = input("Descripcion:")
 
+            datos_ingreso = {'Nombre': nombre, 'Descripcion': Descripcion}
+            resultado = coleccion.insert_one(datos_ingreso)
+            print(f"Estado Ingresado con la Siguiente ID: {resultado.inserted_id}")
+            continuar = input("¿Desea agregar otro estado? (s/n): ")
+            if continuar.lower() !='s':
+                break
 
 class TypeAccount:
     def __init__(self):
@@ -187,4 +200,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.AgregarEquipamiento()
+GameMaster1.user.AgregarRaza()
