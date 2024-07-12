@@ -327,6 +327,16 @@ class AtlasGameMaster(AtlasBase):
                     resultado = coleccion.update_one({"_id": id_estado},
                                                      {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
                     print("Estado Actualizado")
+                elif Decision == '2': 
+                    nuevadescripcion = input("Nueva Descripcion: ")
+                    resultado = coleccion.update_one({"_id": id_estado},
+                                 {"$set": {"Descripcion": nuevadescripcion}})
+                    print("Estado Actualizado")
+                elif Decision == '1':
+                    nuevonombre = input("Nuevo Nombre: ")
+                    resultado = coleccion.update_one({"_id":id_estado}, {"set" : {"Nombre": nuevonombre}})
+                    print("Estado Actualizado")
+
             case "Poder":
                 coleccion = self.basededatos["Razas"]
                 razas = list(coleccion.find({},{"Nombre":1}))
