@@ -456,7 +456,43 @@ class AtlasGameMaster(AtlasBase):
                 elif Decision == '1':
                     nuevonombre = input("Ingrese el nombre: ")
                     resultado = collecion.update_one({"_id" : id_habilidad}, {'$set' : {"Nombre" : nuevonombre} } )
-                    print("Habilidad Actu")
+                    print("Habilidad Actualizada")
+            case "Razas":
+                coleccion = self.basededatos["Razas"]
+                razas = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
+    
+                print("Razas existentes: (Seleccione el numero que va a modificar)")
+                for i, raza in enumerate(razas):
+                    print(f"{i+1}. {raza['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_raza = int(input()) - 1
+                        if 0 <= eleccion_raza < len(razas):  
+                            raza_seleccionada = razas[eleccion_raza]  # Get the entire state document
+                            raza_id = raza_seleccionada["_id"]
+                            break
+                        else:
+                            print("Opción inválida. Por favor, elija un número de la lista.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+    
+                Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
+                if Decision == '3':  # Use string comparison for input
+                    nuevonombre = input("Nuevo Nombre: ")
+                    nuevadescripcion = input("Nueva Descripcion: ")
+                    resultado = coleccion.update_one({"_id": raza_id},
+                                                     {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
+                    print("Estado Actualizado")
+                elif Decision == '2': 
+                    nuevadescripcion = input("Nueva Descripcion: ")
+                    resultado = coleccion.update_one({"_id": raza_id},
+                                 {"$set": {"Descripcion": nuevadescripcion}})
+                    print("Estado Actualizado")
+                elif Decision == '1':
+                    nuevonombre = input("Nuevo Nombre: ")
+                    resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
+                    print("Estado Actualizado")
 
 
 
@@ -484,4 +520,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Modificar("Habilidades")
+GameMaster1.user.Modificar("Razas")
