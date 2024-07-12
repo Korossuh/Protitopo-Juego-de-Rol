@@ -16,7 +16,7 @@ class AtlasBase:  # Common base class for both types
             self.basededatos = self.mongodb_client[dbname]
             print("Autenticacion Exitosa!")
         except Exception as e:
-            print(f"Eres gay: {e}")
+            print(f"nombre invalido: {e}")
             raise
 
     def ping(self):
@@ -177,6 +177,55 @@ class AtlasGameMaster(AtlasBase):
             continuar = input("¿Desea agregar otro estado? (s/n): ")
             if continuar.lower() !='s':
                 break
+    def Modificar(self, Objeto):
+        match Objeto:
+            case "Estado":
+                coleccion = self.basededatos["Estados"]
+                Estados = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
+    
+                print("Estados Existentes: (Seleccione el numero que va a modificar)")
+                for i, estado in enumerate(Estados):
+                    print(f"{i+1}. {estado['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_estado = int(input()) - 1
+                        if 0 <= eleccion_estado < len(Estados):  
+                            estado_seleccionado = Estados[eleccion_estado]  # Get the entire state document
+                            id_estado = estado_seleccionado["_id"]
+                            break
+                        else:
+                            print("Opción inválida. Por favor, elija un número de la lista.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+    
+                Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
+                if Decision == '3':  # Use string comparison for input
+                    nuevonombre = input("Nuevo Nombre: ")
+                    nuevadescripcion = input("Nueva Descripcion: ")
+                    resultado = coleccion.update_one({"_id": id_estado},
+                                                     {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
+                    print("Estado Actualizado")
+            case "Poder":
+                coleccion = self.basededatos["Razas"]
+                razas = list(coleccion.find({},{"Nombre":1}))
+                collecion = self.basededatos["Poderes"]
+                Poderes = list(collecion.find({},{"_id":1,"Nombre": 1}))
+                print("Estados Existentes: (Seleccione el numero que va a modificar)")
+                for i, poder in enumerate(Poderes):
+                    print(f"{i+1}. {poder['Nombre']}")
+                while True:
+                    try:
+                        eleccion_poder = int(input()) -1
+                        if 0 <= eleccion_poder < len(Poderes):
+                            poder_seleccionado = Poderes[eleccion_poder]
+                            id_poder = poder_seleccionado["_id"]
+                            break
+                        else: 
+                            print("Eleccion Invalida, por favor elija un poder valido ")
+                    except ValueError:
+                        print("Por favor, ingrese un numero valido")
+
 
 class TypeAccount:
     def __init__(self):
@@ -200,4 +249,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.AgregarRaza()
+GameMaster1.user.Modificar("Estado")
