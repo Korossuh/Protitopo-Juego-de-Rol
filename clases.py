@@ -375,6 +375,29 @@ class AtlasGameMaster(AtlasBase):
                     
                     resultado = collecion.update_one({"_id":id_poder}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
                     print("Poder Actualizado:")
+                elif Decision == "3":
+                    for i, raza in enumerate(razas):
+                        print(f"{i+1}. {raza['Nombre']}")
+                    
+                        while True: 
+                            try:
+                                eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                                if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                    break  
+                                else:
+                                    print("Opción inválida. Intente de nuevo.")
+                            except ValueError:
+                                print("Por favor, ingrese un número.")
+                    resultado = collecion.update_one({"_id": id_poder}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
+                elif Decision == '2':
+                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                    resultado = collecion.update_one({"_id": id_poder}, {"$set": {"Descripcion" : nuevadescripcion} })
+                    print("Poder Actualizado")
+                elif Decision == '1':
+                    nuevonombre = input("Ingrese el nombre: ")
+                    resultado = collecion.update_one({"_id" : id_poder}, {'$set' : {"Nombre" : nuevonombre} } )
+                    print("Poder Actualizado")
+
 
 
 
