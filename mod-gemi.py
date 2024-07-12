@@ -34,7 +34,7 @@ class ModEquipmentUser:
 
     def mostrar_equipamiento(self):
         print("┌────────────────────────────┐")
-        print("│   Equipamiento Actual      │")
+        print("│  Ranuras                   │")
         print("└────────────────────────────┘")
         print("          |  O                ")
         print("          +--|---|            ")

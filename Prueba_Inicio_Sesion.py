@@ -2,7 +2,7 @@
 from pymongo import MongoClient
 from getpass import getpass  # For secure password input
 
-url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
+url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/?"
 
 class TypeAccount:
     def __init__(self   ):

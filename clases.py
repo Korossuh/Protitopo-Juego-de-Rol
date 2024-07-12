@@ -111,46 +111,59 @@ class AtlasGameMaster(AtlasBase):
             if continuar.lower() != 's':
                 break
     def AgregarEquipamiento(self):
-        collecion = self.basededatos['Razas']
-        razas = list(collecion.find({},{"Nombre":1}))
-        coleccion = self.basededatos['Equipamiento']
-        while True: 
-            print("Si desea agregar equipamiento, ingrese primero el nombre y descripcion del estado.")
+        collecion = self.basededatos['Equipamiento']  # Corrección: Usar la colección de equipamiento
+        self.equipamiento_personaje = {
+            "Cabeza": "",
+            "Mano Izquierda": "",
+            "Mano Derecha": "",
+            "Torso": "",
+            "Piernas": "",
+            "Pies": ""
+        }
+
+        while True:
+            print("Si desea agregar equipamiento, ingrese primero el nombre y descripcion del Equipamiento.")
             nombre = input("Ingrese el nombre: ")
             descripcion = input("Ingrese la descripción: ")
-            Ranuras = []
-            Slots_disponibles=['Mano Derecha','Brazo Derecho','Mano Izquierda',
-                                'Brazo Izquierdo','Pie Derecho','Rodilla Derecha','Pie Izquierdo','Rodilla Izquierda',
-                                'Pecho','Cara','Cabeza']
-            while True:
-                for i,Slots_disponibles in enumerate(Slots_disponibles):
-                    print(f"{i+1}, {Slots_disponibles}")
-                    break;
-
-            
-            print("\nRazas disponibles:")
-            for i, raza in enumerate(razas):
-                print(f"{i+1}. {raza['Nombre']}")
-            
-            while True: 
-                try:
-                    eleccion_raza = int(input("Elija la raza a la que pertenece el poder (o 0 si no aplica): ")) - 1
-                    if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
-                        break  
-                    else:
-                        print("Opción inválida. Intente de nuevo.")
-                except ValueError:
-                    print("Por favor, ingrese un número.")
-            datos_ingreso = {'Nombre': nombre, 'Descripcion': descripcion}
-            if eleccion_raza != -1:  
-                datos_ingreso['Raza'] = razas[eleccion_raza]['_id'] 
+            Ranura = ""
+            Terminado = False
     
-            resultado = coleccion.insert_one(datos_ingreso)
-            print(f"Poder agregado con ID: {resultado.inserted_id}")
-
-            continuar = input("¿Desea agregar otro poder? (s/n): ")
+            while True:
+                print("┌────────────────────────────┐")
+                print("│          Ranuras           │")
+                print("└────────────────────────────┘")
+                print("          |  O                ")
+                print("          +--|---|            ")
+                print("             |   |            ")
+                print("            / \\              ")
+                print("          _/   \\_             ")
+    
+                equipamiento_mod = list(self.equipamiento_personaje.keys())
+                for i, equipameinto in enumerate(equipamiento_mod):
+                    print(f"{i+1}. {equipameinto}")
+    
+                while Terminado == False:
+                    try:
+                        destino = int(input("En que ranura desea agregar el equipamiento? (Escribe un número): ")) - 1
+                        if 0 <= destino < len(equipamiento_mod):
+                            Ranura = equipamiento_mod[destino]
+                            print(Ranura)
+                            Terminado = True
+                        else:
+                            print("Número inválido. Inténtalo de nuevo.")
+                    except ValueError:
+                        print("Ingresa un número válido.")
+    
+                datos_ingreso = {"Nombre": nombre, "Descripcion": descripcion, "Ranura": Ranura}
+                resultado = collecion.insert_one(datos_ingreso)
+                print(f"Datos Ingresado con ID {resultado.inserted_id}")
+                break
+    
+    
+            continuar = input("¿Desea agregar otro Equipamiento? (s/n): ")
             if continuar.lower() != 's':
                 break
+
 
 class TypeAccount:
     def __init__(self):
