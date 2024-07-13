@@ -3,8 +3,6 @@ from getpass import getpass
 import string
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
-#url1 = "mongodb+srv://GameMaster:qh20Fpw4QAeX0uhd@cluster0.rlqm0qg.mongodb.net/"
-# 4fmRjvvCxji3QllQ
 class AtlasBase:  # Common base class for both types
     def __init__(self, url, dbname):
         print(f"┌────────────────────────────┐\n│ {'🧙‍♂️ Benvenuto, ' + self.__class__.__name__ + ' ⚔️'} │\n└────────────────────────────┘")
@@ -677,12 +675,6 @@ class AtlasGameMaster(AtlasBase):
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_equipamiento})
             
-                
-
-            
-
-
-
 
 class TypeAccount:
     def __init__(self):
@@ -706,4 +698,3 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Eliminar("Equipamiento")
