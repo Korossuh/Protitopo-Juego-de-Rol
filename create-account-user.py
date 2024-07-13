@@ -1,5 +1,6 @@
 from getpass import getpass
 import string
+import bcrypt
 
 class CreateAccount:
     def MenuCreateAccount(self):
@@ -37,24 +38,27 @@ class CreateAccount:
 
     def ObtenerContraseña(self):
         while True:
-            password = getpass("Ingrese su contraseña:")
+            contraseña = getpass("Ingrese su contraseña:")
             
-            if not 8 <= len(password) <= 20: #Verifica la Longitud del codigo
+            if not 8 <= len(contraseña) <= 20: #Verifica la Longitud del codigo
                 print("Su contraseña debe tener entre 8 y 20 caracteres.")
 
-            elif not any(char.isdigit() for char in password):  # Verifica si hay al menos un numero
+            elif not any(char.isdigit() for char in contraseña):  # Verifica si hay al menos un numero
                 print("Su contraseña debe tener al menos un número.")
 
-            elif not any(char in string.punctuation for char in password):  # Verifica si hay al menos un carácter especial
+            elif not any(char in string.punctuation for char in contraseña):  # Verifica si hay al menos un carácter especial
                 print("Su contraseña debe tener al menos un carácter especial.")
             
-            elif not any(char.isupper() for char in password):  # Verifica si hay al menos una mayúscula
+            elif not any(char.isupper() for char in contraseña):  # Verifica si hay al menos una mayúscula
                 print("Su contraseña debe tener al menos una letra mayúscula.")
             
             else:
+                contraseña_hash = bcrypt.hashpw(contraseña.encode(), bcrypt.gensalt())
                 print("Su contraseña esta correcta")
-                print(f"la contraseña es: {password}")
+                print(f"la contraseña es: {contraseña}")
                 break
+            return contraseña_hash
+
         
 
 create = CreateAccount()

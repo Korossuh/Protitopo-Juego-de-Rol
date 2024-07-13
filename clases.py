@@ -2,23 +2,35 @@ from pymongo import MongoClient
 from getpass import getpass
 import string
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
-
+url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
+#url1 = "mongodb+srv://GameMaster:qh20Fpw4QAeX0uhd@cluster0.rlqm0qg.mongodb.net/"
+# 4fmRjvvCxji3QllQ
 class AtlasBase:  # Common base class for both types
     def __init__(self, url, dbname):
         print(f"┌────────────────────────────┐\n│ {'🧙‍♂️ Benvenuto, ' + self.__class__.__name__ + ' ⚔️'} │\n└────────────────────────────┘")
+        if url != url1:
+            Nombredeusuario = input("Nombre De Usuario: ")
+            contraseña = getpass("contraseña: ")
+            updated_url = url.replace("<username>:<password>", f"{Nombredeusuario}:{contraseña}")
+    
+            self.mongodb_client = MongoClient(updated_url)
+            try:
+                self.mongodb_client.admin.command('ping')
+                self.basededatos = self.mongodb_client[dbname]
+                print("Autenticacion Exitosa!")
+            except Exception as e:
+                print(f"nombre invalido: {e}")
+                raise
+        else:
+            self.mongodb_client = MongoClient(url)
+            try:
+                self.mongodb_client.admin.command('ping')
+                self.basededatos = self.mongodb_client[dbname]
+                print("Autenticacion Exitosa!")
+            except Exception as e:
+                print(f"nombre invalido: {e}")
+                raise
 
-        Nombredeusuario = input("Nombre De Usuario: ")
-        contraseña = getpass("contraseña: ")
-        updated_url = url.replace("<username>:<password>", f"{Nombredeusuario}:{contraseña}")
-
-        self.mongodb_client = MongoClient(updated_url)
-        try:
-            self.mongodb_client.admin.command('ping')
-            self.basededatos = self.mongodb_client[dbname]
-            print("Autenticacion Exitosa!")
-        except Exception as e:
-            print(f"nombre invalido: {e}")
-            raise
 
     def ping(self):
         self.mongodb_client.admin.command('ping')
@@ -685,7 +697,7 @@ class TypeAccount:
             tipo_cuenta = input("Elige una opción (1 o 2): ")
 
             if tipo_cuenta == "1":
-                self.user = AtlasCliente(url, dbname="sample_flix")  #
+                self.user = AtlasCliente(url1, dbname="JuegodeRol")  #
                 break
             elif tipo_cuenta == "2":
                 self.user = AtlasGameMaster(url, dbname="JuegodeRol")  
