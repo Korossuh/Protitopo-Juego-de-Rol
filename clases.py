@@ -600,4 +600,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Eliminar("Razas")
+GameMaster1.user.Eliminar("Raza")
