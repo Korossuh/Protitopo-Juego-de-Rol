@@ -493,7 +493,87 @@ class AtlasGameMaster(AtlasBase):
                     nuevonombre = input("Nuevo Nombre: ")
                     resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
                     print("Raza Actualizada")
+    def Eliminar(self,Objeto):
+        match Objeto:
+            case "Estado":
+                coleccion = self.basededatos["Estados"]
+                Estados = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
+    
+                print("Estados Existentes: (Seleccione el estado que va a elimibar)")
+                for i, estado in enumerate(Estados):
+                    print(f"{i+1}. {estado['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_estado = int(input()) - 1
+                        if 0 <= eleccion_estado < len(Estados):  
+                            estado_seleccionado = Estados[eleccion_estado]  # Get the entire state document
+                            id_estado = estado_seleccionado["_id"]
+                            break
+                        else:
+                            print("Opción inválida. Por favor, elija un número de la lista.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+                eliminacion = coleccion.delete_one({"_id" : id_estado})
+            case "Poder":
+                collecion = self.basededatos["Poderes"]
+                Poderes = list(collecion.find({},{"_id":1,"Nombre": 1}))
+                print("Poderes Existentes: (Seleccione el numero que va a modificar)")
+                for i, poder in enumerate(Poderes):
+                    print(f"{i+1}. {poder['Nombre']}")
+                while True:
+                    try:
+                        eleccion_poder = int(input()) -1
+                        if 0 <= eleccion_poder < len(Poderes):
+                            poder_seleccionado = Poderes[eleccion_poder]
+                            id_poder = poder_seleccionado["_id"]
+                            break
+                        else: 
+                            print("Eleccion Invalida, por favor elija un poder valido ")
+                    except ValueError:
+                        print("Por favor, ingrese un numero valido")
+                eliminacion = coleccion.delete_one({"_id" : id_poder})
+            case "Habilidades":
+                collecion = self.basededatos["Habilidades"]
+                Habilidades = list(collecion.find({},{"_id":1,"Nombre": 1}))
+                print("Habilidades Existentes: (Seleccione el numero que va a modificar)")
+                for i, habilidad in enumerate(Habilidades):
+                    print(f"{i+1}. {habilidad['Nombre']}")
+                while True:
+                    try:
+                        eleccion_habilidad = int(input()) -1
+                        if 0 <= eleccion_habilidad < len(Habilidades):
+                            habilidad_seleccionada = Habilidades[eleccion_habilidad]
+                            id_habilidad = habilidad_seleccionada["_id"]
+                            break
+                        else: 
+                            print("Eleccion Invalida, por favor elija una habilidad valida ")
+                    except ValueError:
+                        print("Por favor, ingrese un numero valido")
+                    eliminacion = coleccion.delete_one({"_id" : id_habilidad})
+            case "Razas":
+                coleccion = self.basededatos["Razas"]
+                razas = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
+    
+                print("Razas existentes: (Seleccione el numero que va a modificar)")
+                for i, raza in enumerate(razas):
+                    print(f"{i+1}. {raza['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_raza = int(input()) - 1
+                        if 0 <= eleccion_raza < len(razas):  
+                            raza_seleccionada = razas[eleccion_raza]  # Get the entire state document
+                            raza_id = raza_seleccionada["_id"]
+                            break
+                        else:
+                            print("Opción inválida. Por favor, elija un número de la lista.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+                eliminacion = coleccion.delete_one({"_id" : raza_id})
+                
 
+            
 
 
 
@@ -520,4 +600,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Modificar("Razas")
+GameMaster1.user.Eliminar("Razas")
