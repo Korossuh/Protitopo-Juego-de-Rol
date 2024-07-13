@@ -27,7 +27,7 @@ class AtlasBase:  # Common base class for both types
         return list(collection.find(filter=filter, limit=limit))
  
 
-class FormularioCreacion:
+class FormularioCreacion(AtlasBase):
     def ObteneridJugador(self):
         pass
     def obtener_nombre(self):
@@ -144,7 +144,7 @@ class FormularioCreacion:
         for atributo, valor in self.atributos_disponibles.items():
             print(f"  - {atributo}: {valor}") 
         print("============================")
-    def Guardar(self,obtener_nombre,obtener_raza,obtener_habilidades,obtener_equipamiento,obtener_poderes,obtener_atributos,url):
+    def Guardar(self,obtener_nombre,obtener_raza,obtener_habilidades,obtener_equipamiento,obtener_poderes,obtener_atributos):
         coleccion = self.basededatos['Personaje']
         #Ingreso Nombre a Base de Datos
         datos_ingreso = {
@@ -164,5 +164,5 @@ class FormularioCreacion:
         
 
 
-formulario1 = FormularioCreacion
+formulario1 = FormularioCreacion(url,dbname="JuegodeRol")
 formulario1.Guardar(obtener_nombre='victor',obtener_raza='elfo',obtener_habilidades='reir',obtener_equipamiento='Espada de Diamante',obtener_poderes='Kamehameha',obtener_atributos='Administracion = 0')
