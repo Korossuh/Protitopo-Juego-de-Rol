@@ -493,6 +493,79 @@ class AtlasGameMaster(AtlasBase):
                     nuevonombre = input("Nuevo Nombre: ")
                     resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
                     print("Raza Actualizada")
+            case "Equipamiento":
+                self.equipamiento_personaje = {
+                        "Cabeza": "",
+                        "Mano Izquierda": "",
+                        "Mano Derecha": "",
+                        "Torso": "",
+                        "Piernas": "",
+                        "Pies": ""
+                    }
+                equipamiento_mod = list(self.equipamiento_personaje.keys())
+                collecion = self.basededatos["Equipamiento"]
+                Equipamientos = list(collecion.find({},{"_id":1,"Nombre": 1}))
+                print("Habilidades Existentes: (Seleccione el numero que va a modificar)")
+                for i, equipamiento in enumerate(Equipamientos):
+                    print(f"{i+1}. {equipamiento['Nombre']}")
+                while True:
+                    try:
+                        eleccion_equipamiento = int(input()) -1
+                        if 0 <= eleccion_equipamiento < len(Equipamientos):
+                            equipamiento_seleccionado = Equipamientos[eleccion_equipamiento]
+                            id_equipamiento = equipamiento_seleccionado["_id"]
+                            break
+                        else: 
+                            print("Eleccion Invalida, por favor elija una habilidad valida ")
+                    except ValueError:
+                        print("Por favor, ingrese un numero valido")
+                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Ranura 4) Todo? ")
+                if Decision == "4":
+                    nuevo_nombre = input("Ingrese el nuevo nombre")
+                    nuevo_descripcion = input("Ingrese la nueva Descripcion ")
+
+                    equipamiento_mod = list(self.equipamiento_personaje.keys())
+                    for i, equipameinto in enumerate(equipamiento_mod):
+                        print(f"{i+1}. {equipameinto}")
+
+                    while True:
+                        try:
+                            destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
+                            if 0 <= destino < len( equipamiento_mod):
+                                Ranura = equipamiento_mod[destino]
+                                break
+                            else:
+                                print("Número inválido. Inténtalo de nuevo.")
+                        except ValueError:
+                            print("Ingresa un número válido.")
+                    resultado = collecion.update_one({"_id":id_equipamiento}, {"$set": {"Nombre": nuevo_nombre, "Descripcion": nuevo_descripcion,"Ranura": Ranura }})
+                    print("Equipamiento Actualizado:")
+                elif Decision == "3":
+                    equipamiento_mod = list(self.equipamiento_personaje.keys())
+                    for i, equipameinto in enumerate(equipamiento_mod):
+                        print(f"{i+1}. {equipameinto}")
+
+                    while True:
+                        try:
+                            destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
+                            if 0 <= destino < len( equipamiento_mod):
+                                Ranura = equipamiento_mod[destino]
+                                break
+                            else:
+                                print("Número inválido. Inténtalo de nuevo.")
+                        except ValueError:
+                            print("Ingresa un número válido.")
+                    resultado = collecion.update_one({"_id": id_equipamiento}, {"$set" : {"Ranura" : Ranura} })
+                elif Decision == '2':
+                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                    resultado = collecion.update_one({"_id": id_equipamiento}, {"$set": {"Descripcion" : nuevadescripcion} })
+                    print("Habilidad Actualizada")
+                elif Decision == '1':
+                    nuevonombre = input("Ingrese el nombre: ")
+                    resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
+                    print("Habilidad Actualizada")
+
+                
     def Eliminar(self,Objeto):
         match Objeto:
             case "Estado":
@@ -571,6 +644,27 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_id})
+            case "Equipamiento":
+                coleccion = self.basededatos["Equipamiento"]
+                Equipamientos = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
+    
+                print("Equipamiento existente Razas existentes: (Seleccione el numero que va a modificar)")
+                for i, equipo in enumerate(Equipamientos):
+                    print(f"{i+1}. {equipo['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_equipamiento = int(input()) - 1
+                        if 0 <= eleccion_equipamiento < len(Equipamientos):  
+                            equipamiento_seleccionado = Equipamientos[eleccion_equipamiento]  # Get the entire state document
+                            raza_equipamiento = equipamiento_seleccionado["_id"]
+                            break
+                        else:
+                            print("Opción inválida. Por favor, elija un número de la lista.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+                eliminacion = coleccion.delete_one({"_id" : raza_equipamiento})
+            
                 
 
             
@@ -600,4 +694,4 @@ class TypeAccount:
                 print("Opción inválida. Intenta de nuevo.")
       
 GameMaster1 = TypeAccount()
-GameMaster1.user.Eliminar("Raza")
+GameMaster1.user.Eliminar("Equipamiento")

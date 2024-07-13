@@ -145,7 +145,7 @@ class FormularioCreacion(AtlasBase):
             print(f"  - {atributo}: {valor}") 
         print("============================")
     def Guardar(self,obtener_nombre,obtener_raza,obtener_habilidades,obtener_equipamiento,obtener_poderes,obtener_atributos):
-        coleccion = self.basededatos['Personaje']
+        coleccion = self.basededatos['Personajes']
         #Ingreso Nombre a Base de Datos
         datos_ingreso = {
             'Nombre':obtener_nombre,
