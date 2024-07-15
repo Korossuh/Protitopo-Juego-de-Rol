@@ -1283,15 +1283,6 @@ class TypeAccount:
                 break  
             else:
                 print("Opción inválida. Intenta de nuevo.")
-    def obtener_cuenta(self):
-        if isinstance(self.user, AtlasCliente):
-            return "Jugador"
-        elif isinstance(self.user, AtlasGameMaster):
-            return "GameMaster"
-
 
 Usuario = TypeAccount()
-if Usuario.obtener_cuenta() == "Jugador":
-    print("Eres un Jugador")
-elif Usuario.obtener_cuenta() == "GameMaster" :
-    print("Eres un GameMaster")
+Usuario.user.AgregarHabilidades()
