@@ -46,6 +46,7 @@ class AtlasBase:  # Common base class for both types
     
 class AtlasCliente(AtlasBase):
     Id_Usuario = ""
+    Nombre_usuario=""
     def login(self):
         coleccion = self.basededatos["Cuenta-User"]
 
@@ -61,6 +62,7 @@ class AtlasCliente(AtlasBase):
             # Comparar las contraseñas.
             if bcrypt.checkpw(contraseña.encode(), stored_hashed_password_binary):
                 self.Id_Usuario = user_document["_id"]
+                self.Nombre_usuario = usuario
                 print(self.Id_Usuario)
                 print("Autenticación exitosa como Jugador")
                 return 
@@ -138,6 +140,7 @@ class AtlasCliente(AtlasBase):
         coleccion_habilidades = self.basededatos["Habilidades"]
         lista_razas = list(coleccion_razas.find({}, {"Nombre": 1}))
         lista_equipamiento = list(coleccion_equipamiento.find({}, {"Nombre": 1}))
+        atributos = {"STR": 0 , "DEX": 0, "CON" : 0, "WIS": 0 , "INT": 0, "CHA": 0}
     
         nombre = input("Ingrese el nombre del Personaje: ")
     
@@ -161,12 +164,12 @@ class AtlasCliente(AtlasBase):
     
         # Query for abilities and powers based on race selection
         filtro_habilidades = (
-            {"$or": [{"Raza_ID": id_raza_seleccionada}, {"Raza_ID": {"$exists": False}}]}
+            {"$or": [{"Raza": id_raza_seleccionada}, {"Raza": {"$exists": False}}]}
             if id_raza_seleccionada
             else {}
         )
         filtro_poderes = (
-            {"$or": [{"Raza_ID": id_raza_seleccionada}, {"Raza_ID": {"$exists": False}}]}
+            {"$or": [{"Raza": id_raza_seleccionada}, {"Raza": {"$exists": False}}]}
             if id_raza_seleccionada
             else {}
         )
@@ -174,13 +177,113 @@ class AtlasCliente(AtlasBase):
         lista_poderes = list(coleccion_poderes.find(filtro_poderes, {"Nombre": 1}))
         lista_habilidades = list(coleccion_habilidades.find(filtro_habilidades, {"Nombre": 1}))
     
+        # Display and select powers
         print("\nPoderes disponibles:")
         for i, poder in enumerate(lista_poderes):
             print(f"{i+1}. {poder['Nombre']}")
     
+        while True:
+            try:
+                eleccion_poder = int(input("Elija un poder: ")) - 1
+                if 0 <= eleccion_poder < len(lista_poderes):
+                    poder_seleccionado = lista_poderes[eleccion_poder]
+                    id_poder = poder_seleccionado["_id"]
+                    break
+                else:
+                    print("Elección inválida. Por favor elija un poder válido.")
+            except ValueError:
+                print("Por favor, ingrese un número válido.")
+    
+        # Display and select abilities
         print("\nHabilidades disponibles:")
         for i, habilidad in enumerate(lista_habilidades):
             print(f"{i+1}. {habilidad['Nombre']}")
+    
+        habilidades_seleccionadas = []  # List to store selected abilities
+
+        print("\nHabilidades disponibles:")
+        for i in range(2):  # Loop to select two abilities
+            for j, habilidad in enumerate(lista_habilidades):
+                print(f"{j+1}. {habilidad['Nombre']}")
+    
+            while True:
+                try:
+                    eleccion_habilidad = int(input("Elija una habilidad: ")) - 1
+                    if 0 <= eleccion_habilidad < len(lista_habilidades):
+                        habilidades_seleccionadas.append(lista_habilidades.pop(eleccion_habilidad))  # Remove and store the selected ability
+                        break
+                    else:
+                        print("Elección inválida. Por favor elija una habilidad válida.")
+                except ValueError:
+                    print("Por favor, ingrese un número válido.")
+    
+            if i == 0:
+                print("\nHabilidad seleccionada. Elija otra habilidad:")
+            else:
+                print("\nSegunda habilidad seleccionada.")
+    
+        id_habilidades = [habilidad["_id"] for habilidad in habilidades_seleccionadas] 
+
+        print("\nEquipamiento Disponible: ")
+
+                    
+        for i, equipamiento in enumerate(lista_equipamiento):
+            print(f"{i+1}. {equipamiento['Nombre']}")
+        while True:
+            try:
+                eleccion_equipamiento = int(input()) -1
+                if 0 <= eleccion_equipamiento < len(lista_equipamiento):
+                    equipamiento_seleccionado = lista_equipamiento[eleccion_equipamiento]
+                    id_equipamiento = equipamiento_seleccionado["_id"]
+                    break
+                else: 
+                    print("Eleccion Invalida, por favor elija una habilidad valida ")
+            except ValueError:
+                print("Por favor, ingrese un numero valido")
+        
+        puntos_disponibles = 10
+        atributos = {"STR": 0, "DEX": 0, "CON": 0, "WIS": 0, "INT": 0, "CHA": 0}
+    
+        print("\nDistribución de Atributos (10 puntos disponibles):")
+        while puntos_disponibles > 0:
+            print("\nPuntos restantes:", puntos_disponibles)
+            for atributo, valor in atributos.items():
+                print(f"{atributo}: {valor}")
+    
+            while True:
+                try:
+                    atributo_elegido = input("Elija un atributo para aumentar (o 'listo' para terminar): ").upper()
+                    if atributo_elegido == 'LISTO' and all(valor > 0 for valor in atributos.values()):  # Check if all attributes have at least 1 point
+                        break
+                    elif atributo_elegido in atributos:
+                        puntos_a_asignar = int(input("¿Cuántos puntos desea asignar? "))
+                        if 1 <= puntos_a_asignar <= puntos_disponibles:
+                            atributos[atributo_elegido] += puntos_a_asignar
+                            puntos_disponibles -= puntos_a_asignar
+                            break
+                        else:
+                            print(f"Puntos inválidos. Debe asignar entre 1 y {puntos_disponibles} puntos.")
+                    else:
+                        print("Atributo inválido. Intente de nuevo.")
+                except ValueError:
+                    print("Por favor, ingrese un número válido.")
+    
+        # Insert character data into database
+        datos_ingreso = {
+            "Nombre": nombre,
+            "ID_Jugador": ObjectId(self.Id_Usuario),
+            "Nombre_Jugador": self.Nombre_usuario,
+            "HitPoints": 10,
+            "Raza": ObjectId(id_raza_seleccionada) if id_raza_seleccionada else None,
+            "Nivel": 1,
+            "Estado_ID": ObjectId("6694921ac4c85e562c0522d0"),
+            "Habilidad_ID": id_habilidades,
+            "Equipamiento_ID": [id_equipamiento],
+            "Poderes_ID": [id_poder],
+            "Atributos": atributos  # Include the attributes in the insert
+        }
+        coleccion_personajes.insert_one(datos_ingreso)
+        print("¡Personaje creado con éxito!")
  
 
 
