@@ -1,4 +1,10 @@
+from pymongo import MongoClient
 from getpass import getpass
+import bcrypt
+import string
+from bson.binary import Binary
+from bson.objectid import ObjectId
+from clases import AtlasBase
 from clases import AtlasCliente
 from clases import AtlasGameMaster
 from clases import TypeAccount
@@ -19,11 +25,11 @@ def menu_cliente(cliente):
         opcion = input("👉 Elija una opción: ")
 
         if opcion == '1':
-            cliente.FichasPersonajes()
+            cliente.user.FichasPersonajes()
         elif opcion == '2':
-            cliente.ModificarEquipamiento()
+            cliente.user.ModificarEquipamiento()
         elif opcion == '3':
-            cliente.CrearPersonaje()
+            cliente.user.CrearPersonaje()
         elif opcion == '4':
             break
         else:
@@ -48,28 +54,29 @@ def menu_GameMaster(GameMaster):
         opcion = input("👉 Elija una opción: ")
 
         if opcion == '1':
-            GameMaster.AgregarEstado()
+            pass
+            
         elif opcion == '2':
-            GameMaster.AgregarPoder()
+            GameMaster.user.AgregarPoder()
         elif opcion == '3':
-            GameMaster.AgregarHabilidades()
+            GameMaster.user.AgregarHabilidades()
         elif opcion == '4':
-            GameMaster.AgregarEquipamiento()
+            GameMaster.user.AgregarEquipamiento()
         elif opcion == '5':
-            GameMaster.AgregarRaza()
+            GameMaster.user.AgregarRaza()
         elif opcion == '6':
             while True:
                 Desicion = input("¿Qué desea modificar?\n1. Estado \n2. Poder \n3. Habilidad \n4. Raza \n.5 Equipamiento \nCual desea escoger?: ")
                 if Desicion =='5':
-                    GameMaster.Modificar("Equipamiento")
+                    GameMaster.user.Modificar("Equipamiento")
                 elif Desicion == '4':
-                    GameMaster.Modificar("Raza")
+                    GameMaster.user.Modificar("Raza")
                 elif Desicion == '3':
-                    GameMaster.Modificar("Habilidad")
+                    GameMaster.user.Modificar("Habilidad")
                 elif Desicion == '2':
-                    GameMaster.Modificar("Poder")
+                    GameMaster.user.Modificar("Poder")
                 elif Desicion == '1':
-                    GameMaster.Modificar("Estado")
+                    GameMaster.user.Modificar("Estado")
                 else:
                     print("Ingrese un numero valido")
 
@@ -77,21 +84,21 @@ def menu_GameMaster(GameMaster):
             while True:
                 Desicion = input("¿Qué desea Eliminar?\n1. Estado \n2. Poder \n3. Habilidad \n4. Raza \n.5 Equipamiento \nCual desea escoger?: ")
                 if Desicion =='5':
-                    GameMaster.Eliminar("Equipamiento")
+                    GameMaster.user.Eliminar("Equipamiento")
                 elif Desicion == '4':
-                    GameMaster.Eliminar("Raza")
+                    GameMaster.user.Eliminar("Raza")
                 elif Desicion == '3':
-                    GameMaster.Eliminar("Habilidad")
+                    GameMaster.user.Eliminar("Habilidad")
                 elif Desicion == '2':
-                    GameMaster.Eliminar("Poder")
+                    GameMaster.user.Eliminar("Poder")
                 elif Desicion == '1':
-                    GameMaster.Eliminar("Estado")
+                    GameMaster.user.Eliminar("Estado")
                 else:
                     print("Ingrese un numero valido")
         elif opcion == '8':
-            GameMaster.VerPartida()
+            GameMaster.user.VerPartida()
         elif opcion == '9':
-            GameMaster.modificar_personaje()
+            GameMaster.user.modificar_personaje()
         elif opcion == '10':
             break
         else:
@@ -103,4 +110,4 @@ if Usuario.obtener_cuenta() == "Jugador":
     Usuario.user.login()
     menu_cliente(Usuario)
 else:
-    menu_GameMaster()
+    menu_GameMaster(Usuario)
