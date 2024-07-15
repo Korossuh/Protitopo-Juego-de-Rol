@@ -96,3 +96,11 @@ def menu_GameMaster(GameMaster):
             break
         else:
             print("Opción inválida.")
+
+Usuario = TypeAccount()
+
+if Usuario.obtener_cuenta() == "Jugador":
+    Usuario.user.login()
+    menu_cliente(Usuario)
+else:
+    menu_GameMaster()
