@@ -1287,6 +1287,3 @@ class TypeAccount:
                 break  
             else:
                 print("Opción inválida. Intenta de nuevo.")
-
-Usuario = TypeAccount()
-Usuario.user.AgregarHabilidades()
