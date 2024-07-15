@@ -6,23 +6,23 @@ from bson.binary import Binary
 from bson.objectid import ObjectId
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
-class AtlasBase:  # Common base class for both types
+class AtlasBase:  # Clase comun para funcionalidad con la base de datos
     def __init__(self, url, dbname):
         print(f"┌────────────────────────────┐\n│ {'🧙‍♂️ Benvenuto, ' + self.__class__.__name__ + ' ⚔️'} │\n└────────────────────────────┘")
-        if url != url1:
+        if url != url1: #Si es url (La del GM) o si es de un Jugador (url1)
             Nombredeusuario = input("Nombre De Usuario: ")
-            contraseña = getpass("contraseña: ")
-            updated_url = url.replace("<username>:<password>", f"{Nombredeusuario}:{contraseña}")
+            contraseña = getpass("contraseña: ") #Getpass asegura que la contraseña no pueda ser vista por el Usuario a modo SUDO
+            updated_url = url.replace("<username>:<password>", f"{Nombredeusuario}:{contraseña}") 
     
-            self.mongodb_client = MongoClient(updated_url)
-            try:
+            self.mongodb_client = MongoClient(updated_url) #Se conecta a la base de datos con la URL 
+            try: #Con la base de datos conectada se hace ping a la base de datos para confirmar conexion.
                 self.mongodb_client.admin.command('ping')
                 self.basededatos = self.mongodb_client[dbname]
                 print("Autenticacion Exitosa!")
             except Exception as e:
                 print(f"nombre invalido: {e}")
                 raise
-        else:
+        else: #Si la url es de Jugador normal se procede a login
             self.mongodb_client = MongoClient(url)
             try:
                 self.mongodb_client.admin.command('ping')
@@ -34,37 +34,37 @@ class AtlasBase:  # Common base class for both types
 
 
 
-    def ping(self):
+    def ping(self): #Define el metodo para hacer ping
         self.mongodb_client.admin.command('ping')
 
-    def ver_collecion(self, nombre_collecion):  
+    def ver_collecion(self, nombre_collecion):  #Define el emtodo para ver la coleccion de una base de datos
         return self.basededatos[nombre_collecion]
 
-    def find(self, nombre_collecion, filter={}, limit=0):
+    def find(self, nombre_collecion, filter={}, limit=0): #permite la creacion de querys de mongodb
         collection = self.basededatos[nombre_collecion]
         return list(collection.find(filter=filter, limit=limit))
     
-class AtlasCliente(AtlasBase):
+class AtlasCliente(AtlasBase): #Clase para el Jugador
     Id_Usuario = ""
-    Nombre_usuario=""
-    def login(self):
-        coleccion = self.basededatos["Cuenta-User"]
+    Nombre_usuario="" #Los dos atributos de esta clase que se usan repetidamente
+    def login(self): #A traves de este metodo se consigue el nombre y la id de usuario
+        coleccion = self.basededatos["Cuenta-User"] #se consiguen los datos de la Coleccion "Cuenta-User" que almacena los Jugadores
 
         print("Ingrese su Nombre de Usuario Y Contraseña")
         usuario = input("Ingrese su nombre de Usuario: ")
         contraseña = getpass("Ingrese su contraseña: ")
 
         # Obtener documento segun el Nombre del Usuario
-        user_document = coleccion.find_one({"Nombre": usuario}) 
-        if user_document:
+        user_document = coleccion.find_one({"Nombre": usuario}) #Se filtra por el nombre de usuario dado
+        if user_document: #si se encuentra se procede con la logica de login
             # Recuperar la contraseña hasheada en (BSON binary)
-            stored_hashed_password_binary = user_document["contraseña"]
+            stored_hashed_password_binary = user_document["contraseña"] #la contraseña en la BD que esta hasheada se recupera para uso
             # Comparar las contraseñas.
-            if bcrypt.checkpw(contraseña.encode(), stored_hashed_password_binary):
-                self.Id_Usuario = ObjectId(user_document["_id"])
+            if bcrypt.checkpw(contraseña.encode(), stored_hashed_password_binary): #se comprueba si la contraseña ingresada es valida
+                self.Id_Usuario = ObjectId(user_document["_id"]) #si lo es se asigna ID al atributo
                 self.Id_Usuario = ObjectId(self.Id_Usuario)
                 
-                self.Nombre_usuario = usuario
+                self.Nombre_usuario = usuario #lo mismo con el nombre
                 print(self.Id_Usuario)
                 print("Autenticación exitosa como Jugador")
                 return 
@@ -73,19 +73,19 @@ class AtlasCliente(AtlasBase):
                 exit
         else:
             print("Usuario no encontrado")   
-    def FichasPersonajes(self):
-        coleccion = self.basededatos["Personajes"]
-        Personajes = list(coleccion.find({"ID_Jugador": self.Id_Usuario} ,{"Nombre": 1}))
+    def FichasPersonajes(self): #Metodo para ver los personajes asociados con el Usuario
+        coleccion = self.basededatos["Personajes"] # Se recupera la coleccionde Personajes para uso
+        Personajes = list(coleccion.find({"ID_Jugador": self.Id_Usuario} ,{"Nombre": 1})) #Se filtra por la Id de Usuario
         print("Sus Personajes: ")
-        for i,personaje in enumerate(Personajes):
-            print(f"{i+1}. {personaje["Nombre"]}")
+        for i,personaje in enumerate(Personajes): 
+            print(f"{i+1}. {personaje["Nombre"]}") #Se muestran los personajes enumerados
         while True:
             try:
-                eleccion_personaje = int(input("Elija un poder: ")) - 1
+                eleccion_personaje = int(input("Elija un personaje: ")) - 1  #El -1 es debido a como funciona los indices en Python
                 if 0 <= eleccion_personaje < len(Personajes):
-                    personaje_seleccionado = Personajes[eleccion_personaje]
-                    id_personaje = personaje_seleccionado["_id"]
-                    self.VerFichasPersonajes(id_personaje)
+                    personaje_seleccionado = Personajes[eleccion_personaje] #A una variable se le entregan los datos del personaje
+                    id_personaje = personaje_seleccionado["_id"] #se asigna la Id del personaje a una variable
+                    self.VerFichasPersonajes(id_personaje) #Se usa el metodo para acceder a la ficha de personajes
                     break
                 else:
                     print("Elección inválida. Por favor elija un personaje válido.")
@@ -93,7 +93,7 @@ class AtlasCliente(AtlasBase):
                 print("Por favor, ingrese un número válido.")
             self.VerFichasPersonajes(id_personaje)
 
-    def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids):
+    def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids): 
         if isinstance(lista_ids, ObjectId):  # Revisar si es una instancia de ObjectId
             lista_ids = [lista_ids]  # convertir a la lista
         elif isinstance(lista_ids, str):  # Revisar si es una string
@@ -105,31 +105,31 @@ class AtlasCliente(AtlasBase):
         return {str(r["_id"]): r["Nombre"] for r in resultado}
 
     def reemplazar_ids_por_nombres(self, documento, mapeo_ids_a_nombres):
-        for clave, valor in documento.items():
+        for clave, valor in documento.items(): #un ciclo que ira reemplazando las ids por los nombres ya conseguidos
             if isinstance(valor, str) and ObjectId.is_valid(valor):  # Revisar por string validas 
                 documento[clave] = mapeo_ids_a_nombres.get(valor, valor)  # Reemplazar por si es valida
-            elif isinstance(valor, list):
+            elif isinstance(valor, list): #Si el valor es una lista de ids, dependiendo de que valores conetenga la lista se llama a uno a uno la funcion
                 documento[clave] = [self.reemplazar_ids_por_nombres(item, mapeo_ids_a_nombres) if isinstance(item, dict) else
                                     mapeo_ids_a_nombres.get(item, item) if ObjectId.is_valid(item) else item for item in valor]
-            elif isinstance(valor, dict):
+            elif isinstance(valor, dict): #si el valor es un diccionario, se reemplaza el valor con los nombres ya obtenidos
                 documento[clave] = self.reemplazar_ids_por_nombres(valor, mapeo_ids_a_nombres)
-        return documento
+        return documento #se retorna "documento" que es el personaje con las ids reemplazadas con los nombres
 
 
-    def VerFichasPersonajes(self, id_personaje):
+    def VerFichasPersonajes(self, id_personaje): #toma la id de personaje ingresada previamente
         coleccion = self.basededatos["Personajes"]
-        personaje = coleccion.find_one({"_id": id_personaje}, {"_id": 0})
+        personaje = coleccion.find_one({"_id": id_personaje}, {"_id": 0}) #Se filtra por la Id para que se obtenga solamente el personaje especificado
 
-        # Mapeos de IDs a nombres
-        mapeo_razas = self.obtener_nombres_por_ids("Razas", personaje["Raza"])
+        # Mapeos de IDs a nombres, por cada campo se accede a la coleccion y al campo especificado
+        mapeo_razas = self.obtener_nombres_por_ids("Razas", personaje["Raza"]) 
         mapeo_estados = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
         mapeo_habilidades = self.obtener_nombres_por_ids("Habilidades", personaje["Habilidad_ID"])
         mapeo_equipamiento = self.obtener_nombres_por_ids("Equipamiento", personaje["Equipamiento_ID"])
         mapeo_poderes = self.obtener_nombres_por_ids("Poderes", personaje["Poderes_ID"])
-        # Unir todos los mapeos en uno solo
+        # Se une todos los nombres ya obtenidos a una sola variable
         mapeo_ids_a_nombres = {**mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes, **mapeo_razas}
 
-        # Reemplazar IDs en el personaje
+        # Reemplazar IDs en el personaje con los nombres
         personaje_con_nombres = self.reemplazar_ids_por_nombres(personaje, mapeo_ids_a_nombres)
 
         # Imprimir el personaje con los nombres
@@ -140,8 +140,8 @@ class AtlasCliente(AtlasBase):
                     print(f"  - {item}")
             else:
                 print(f"{clave}: {valor}")
-    def ModificarEquipamiento(self):
-        coleccion_personajes = self.basededatos["Personajes"]
+    def ModificarEquipamiento(self): # metodo para modificar equipamiento de un personaje
+        coleccion_personajes = self.basededatos["Personajes"] 
         coleccion_equipamiento = self.basededatos["Equipamiento"]
     
         # Mostrar la lista de personajes a elegir
@@ -196,7 +196,7 @@ class AtlasCliente(AtlasBase):
                             print("Elección inválida. Por favor elija un equipamiento válido.")
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
-        elif decision == "2":  # Unequip
+        elif decision == "2":  # Desequipar
             # Mostrar equipamiento ya equipado
             if not equipamiento_actual:
                 print("El personaje no tiene ningún equipamiento.")
@@ -224,7 +224,7 @@ class AtlasCliente(AtlasBase):
         )
         print("Equipamiento modificado con éxito.")
         
-    def CrearPersonaje(self):
+    def CrearPersonaje(self): #Meotodo para crear personajes
         coleccion_personajes = self.basededatos["Personajes"]
         coleccion_razas = self.basededatos["Razas"]
         coleccion_equipamiento = self.basededatos["Equipamiento"]
@@ -377,8 +377,10 @@ class AtlasCliente(AtlasBase):
             "Habilidad_ID": [str(id) for id in id_habilidades],
             "Equipamiento_ID": [str(id_equipamiento)],
             "Poderes_ID": [str(id_poder)],
-            "Atributos": atributos  # Include the attributes in the insert
+            "Atributos": atributos  
         }
+        #La transformacion a string es un ejemplo perfecto de entropia, a pesar de que el GM puede sin ni un problema buscar IDs.
+        #En algun momento el Cliente perdio esa facultad y si en la DB los campos estaban como ObjectId daba error y no estamos muy seguros porque
         coleccion_personajes.insert_one(datos_ingreso)
         print("¡Personaje creado con éxito!")
  
@@ -386,14 +388,14 @@ class AtlasCliente(AtlasBase):
 
 
 
-class AtlasGameMaster(AtlasBase):
-    def AgregarEstado(self):
+class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
+    def AgregarEstado(self): #Metodos para la agregacion de distintos datos a la DB
         coleccion = self.basededatos['Estados']
         while True: 
             print("Si desea agregar un estado, ingrese primero el nombre y descripcion del estado.")
             while True:
                 nombre = input("Ingrese el nombre: ")
-                if any(caracter in string.punctuation for caracter in nombre):
+                if any(caracter in string.punctuation for caracter in nombre): #If para asegurar que el GM no se ponga gracioso con los nombres
                     print("No se permiten caracteres especiales.")
                 else:
                     print(f"El nombre '{nombre}' está correcto.")
@@ -402,7 +404,7 @@ class AtlasGameMaster(AtlasBase):
             
             
             datos_ingreso = {'Nombre': nombre, 'Descripcion': descripcion}
-            result = coleccion.insert_one(datos_ingreso)  # Store the result of the insert operation
+            result = coleccion.insert_one(datos_ingreso)  # Hacer insert a la base de datos
             print(f"Estado agregado con ID: {result.inserted_id}")
             continuar = input("¿Desea agregar otro estado? (s/n): ")
             if continuar.lower() != 's':
@@ -1281,7 +1283,15 @@ class TypeAccount:
                 break  
             else:
                 print("Opción inválida. Intenta de nuevo.")
+    def obtener_cuenta(self):
+        if isinstance(self.user, AtlasCliente):
+            return "Jugador"
+        elif isinstance(self.user, AtlasGameMaster):
+            return "GameMaster"
 
 
 Usuario = TypeAccount()
-Usuario.user.VerPartida()
+if Usuario.obtener_cuenta() == "Jugador":
+    print("Eres un Jugador")
+elif Usuario.obtener_cuenta() == "GameMaster" :
+    print("Eres un GameMaster")
