@@ -147,7 +147,6 @@ class AtlasCliente(AtlasBase):
         print("\nRazas disponibles:")
         for i, raza in enumerate(lista_razas):
             print(f"{i+1}. {raza['Nombre']}")
-        print("0. Ninguna raza específica")  # Add option for no race
     
         while True:
             try:
@@ -160,7 +159,7 @@ class AtlasCliente(AtlasBase):
                 print("Por favor, ingrese un número válido.")
     
         # Fetch selected race details (or None if no race chosen)
-        id_raza_seleccionada = lista_razas[eleccion_raza]["_id"] if eleccion_raza != -1 else None
+        id_raza_seleccionada = lista_razas[eleccion_raza]["_id"]
     
         # Query for abilities and powers based on race selection
         filtro_habilidades = (
