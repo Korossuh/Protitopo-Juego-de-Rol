@@ -140,7 +140,6 @@ class AtlasCliente(AtlasBase):
         coleccion_habilidades = self.basededatos["Habilidades"]
         lista_razas = list(coleccion_razas.find({}, {"Nombre": 1}))
         lista_equipamiento = list(coleccion_equipamiento.find({}, {"Nombre": 1}))
-        atributos = {"STR": 0 , "DEX": 0, "CON" : 0, "WIS": 0 , "INT": 0, "CHA": 0}
     
         nombre = input("Ingrese el nombre del Personaje: ")
     
