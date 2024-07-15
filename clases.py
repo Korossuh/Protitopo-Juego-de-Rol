@@ -1,6 +1,9 @@
 from pymongo import MongoClient
 from getpass import getpass
+import bcrypt
 import string
+from bson.binary import Binary
+from bson.objectid import ObjectId
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
 class AtlasBase:  # Common base class for both types
@@ -30,6 +33,7 @@ class AtlasBase:  # Common base class for both types
                 raise
 
 
+
     def ping(self):
         self.mongodb_client.admin.command('ping')
 
@@ -41,126 +45,145 @@ class AtlasBase:  # Common base class for both types
         return list(collection.find(filter=filter, limit=limit))
     
 class AtlasCliente(AtlasBase):
-    def obtener_nombre(self):
-        while True:
-            nombre = input("Ingrese el nombre de su personaje: ")
-            #la primera condicion de este if sirve para que el nombre ingresado no tenga
-            #caracteres especiales como '_' , '+', '*' etc 
-            if any(caracter in string.punctuation for caracter in nombre):
-                print("No se permiten caracteres especiales.")
+    Id_Usuario = ""
+    def login(self):
+        coleccion = self.basededatos["Cuenta-User"]
+
+        print("Ingrese su Nombre de Usuario Y Contraseña")
+        usuario = input("Ingrese su nombre de Usuario: ")
+        contraseña = getpass("Ingrese su contraseña: ")
+
+        # Obtener documento segun el Nombre del Usuario
+        user_document = coleccion.find_one({"Nombre": usuario}) 
+        if user_document:
+            # Recuperar la contraseña hasheada en (BSON binary)
+            stored_hashed_password_binary = user_document["contraseña"]
+            # Comparar las contraseñas.
+            if bcrypt.checkpw(contraseña.encode(), stored_hashed_password_binary):
+                self.Id_Usuario = user_document["_id"]
+                print(self.Id_Usuario)
+                print("Autenticación exitosa como Jugador")
+                return 
             else:
-                print(f"El nombre '{nombre}' está correcto.")
-                return nombre
-
-    def obtener_raza(self):
-        razadisponible = ['humano', 'elfo', 'semi elfo', 'enano', 'draconido', 'gnomo', 'mediano', 'semi orco', 'tiflin']
-        while True:
-            print("\nRazas Disponibles:")
-            for raza in razadisponible:
-                print(f"- {raza}") 
-            raza = input("Ingrese el nombre de la raza que quiere: ").lower()
-            if raza in razadisponible:
-                print(f"Ha seleccionado la raza '{raza}'.")
-                return raza
-            else:
-                print("Ingrese una raza válida.")
-
-    def obtener_habilidades(self):
-        equipamientodisponible = ['correr', 'reir', 'saltar', 'dormir', 'comer']
-        habilidades_escogidas = []
-        while len(habilidades_escogidas) < 2: #maximo de habilidades
-            print("\nHabilidades Disponibles:")
-            for habilidad in equipamientodisponible:
-                print(f"- {habilidad}")
-            habilidad = input(f"Ingrese el la habilidad número {len(habilidades_escogidas) + 1}: ").lower()
-            if habilidad in equipamientodisponible and habilidad not in habilidades_escogidas:
-                habilidades_escogidas.append(habilidad)
-                print(f"Has escogido la habilidad '{habilidad}'.")
-            else:
-                print("Ingrese una habilidad válida y que no hayas escogido antes.")
-        print(f"Estas son tus habilidades: {', '.join(habilidades_escogidas)}")  
-        return habilidades_escogidas
-    
-    def obtener_equipamiento(self):
-        equipamientodisponible = ['casco de oro','casco de metal', 'peto de oro','peto de metal', 'pantalones', 'zapatos']
-        equipamiento_escogidas = []
-        while len(equipamiento_escogidas) < 1: #maximo de equipamiento
-            print("\nEquipamientos Disponibles:")
-            for equipameinto in equipamientodisponible:
-                print(f"- {equipameinto}")
-            equipameinto = input(f"Ingrese el equipamiento n{len(equipamiento_escogidas) + 1}: ").lower()
-            if equipameinto in equipamientodisponible and equipameinto not in equipamiento_escogidas:
-                equipamiento_escogidas.append(equipameinto)
-                print(f"Has escogido un'{equipameinto}'.")
-            else:
-                print("Ingrese una habilidad válida y que no hayas escogido antes.")
-        print(f"Estas son tus habilidades: {', '.join(equipamiento_escogidas)}")  
-        return equipamiento_escogidas
-    
-    def obtener_poderes(self):
-        poderesdisponible = ['kamehameha','genkidama', 'bigban attack',]
-        poderes_escogidos = []
-        while len(poderes_escogidos) < 1: #maximo de poder
-            print("\nPoderes Disponibles:")
-            for poder in poderesdisponible:
-                print(f"- {poder}")
-            poder = input(f"Ingrese el poder n{len(poderes_escogidos) + 1}: ").lower()
-            if poder in poderesdisponible and poder not in poderes_escogidos:
-                poderes_escogidos.append(poder)
-                print(f"Has escogido un'{poder}'.")
-            else:
-                print("Ingrese un poder válido y que no hayas escogido antes.")
-        print(f"Estos son tus poderes: {', '.join(poderes_escogidos)}")  
-        return poderes_escogidos
-
-    def obtener_atributos(self):
-        atributos = {
-            "carisma": 0,
-            "fuerza": 0,
-            "salto": 0,
-            "administracion": 0
-        }
-        puntos_mejora = 30
-
-        while puntos_mejora > 0:
-            print("\nValores actuales de los atributos:")
-            for atributo, valor in atributos.items():
-                print(f"{atributo} = {valor}")
-
-            print(f"Puntos de mejora disponibles: {puntos_mejora}")
-            atributo_a_mejorar = input("Ingrese el atributo a mejorar: ").lower()
-
-            if atributo_a_mejorar not in atributos:
-                print("Atributo inválido. Intente de nuevo.")
-                continue
-
+                print("Contraseña incorrecta")
+                exit
+        else:
+            print("Usuario no encontrado")   
+    def FichasPersonajes(self):
+        coleccion = self.basededatos["Personajes"]
+        Personajes = list(coleccion.find({"ID_Jugador": self.Id_Usuario} ,{"Nombre": 1}))
+        print("Sus Personajes: ")
+        for i,personaje in enumerate(Personajes):
+            print(f"{i+1}. {personaje["Nombre"]}")
             while True:
                 try:
-                    puntos_a_asignar = int(input(f"Puntos a asignar a {atributo_a_mejorar}: "))
-                    if 0 < puntos_a_asignar <= puntos_mejora:
-                        atributos[atributo_a_mejorar] += puntos_a_asignar
-                        puntos_mejora -= puntos_a_asignar
+                    eleccion_personaje = int(input()) -1
+                    if 0 <= eleccion_personaje < len(Personajes):
+                        personaje_seleccionado = Personajes[eleccion_personaje]
+                        id_personaje = personaje_seleccionado["_id"]
                         break
-                    else:
-                        print(f"Valor inválido. Debe ser entre 1 y {puntos_mejora}.")
+                    else: 
+                        print("Seleccion invalida ")
                 except ValueError:
-                    print("Ingrese un número válido.")
+                    print("Por favor, ingrese un numero valido")
+            self.VerFichasPersonajes(id_personaje)
 
-        print("\nAsignación de atributos finalizada.")
-        return atributos
+    def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids):
+        coleccion = self.basededatos[nombre_coleccion]
+        resultado = coleccion.find({"_id": {"$in": [ObjectId(id) for id in lista_ids]}}, {"Nombre": 1})  # Convert strings to ObjectIds
+        return {str(r["_id"]): r["Nombre"] for r in resultado} 
 
-    def DatosPersonaje(self):
-        print("\n============================")
-        print("Datos del Personaje:")
-        print(f"Nombre: {self.nombre}")
-        print(f"Raza: {self.raza}")
-        print(f"Habilidades: {', '.join(self.habilidad)}")
-        print(f"Equipamiento: {', '.join(self.equipamiento)}")
-        print(f"Poderes: {', '.join(self.poder)}")
-        print("Atributos:")
-        for atributo, valor in self.atributos_disponibles.items():
-            print(f"  - {atributo}: {valor}") 
-        print("============================")
+    def reemplazar_ids_por_nombres(self, documento, mapeo_ids_a_nombres):
+        for clave, valor in documento.items():
+            if isinstance(valor, str) and ObjectId.is_valid(valor):  # Check for valid ObjectId strings
+                documento[clave] = mapeo_ids_a_nombres.get(valor, valor)  # Replace if found
+            elif isinstance(valor, list):
+                documento[clave] = [self.reemplazar_ids_por_nombres(item, mapeo_ids_a_nombres) if isinstance(item, dict) else
+                                    mapeo_ids_a_nombres.get(item, item) if ObjectId.is_valid(item) else item for item in valor]
+            elif isinstance(valor, dict):
+                documento[clave] = self.reemplazar_ids_por_nombres(valor, mapeo_ids_a_nombres)
+        return documento
+
+
+    def VerFichasPersonajes(self, id_personaje):
+        coleccion = self.basededatos["Personajes"]
+        personaje = coleccion.find_one({"_id": id_personaje}, {"_id": 0})
+
+        # Mapeos de IDs a nombres: (Simplified since the field name is the same)
+        mapeo_estados = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
+        mapeo_habilidades = self.obtener_nombres_por_ids("Habilidades", personaje["Habilidad_ID"])
+        mapeo_equipamiento = self.obtener_nombres_por_ids("Equipamiento", personaje["Equipamiento_ID"])
+        mapeo_poderes = self.obtener_nombres_por_ids("Poderes", personaje["Poderes_ID"])
+        # Unir todos los mapeos en uno solo
+        mapeo_ids_a_nombres = {**mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes}
+
+        # Reemplazar IDs en el personaje
+        personaje_con_nombres = self.reemplazar_ids_por_nombres(personaje, mapeo_ids_a_nombres)
+
+        # Imprimir el personaje con los nombres
+        for clave, valor in personaje_con_nombres.items():
+            if isinstance(valor, list) and valor:
+                print(f"{clave}:")
+                for item in valor:
+                    print(f"  - {item}")
+            else:
+                print(f"{clave}: {valor}")
+    def ModificarEquipamiento(self):
+        pass
+    def CrearPersonaje(self):
+        coleccion_personajes = self.basededatos["Personajes"]
+        coleccion_razas = self.basededatos["Razas"]
+        coleccion_equipamiento = self.basededatos["Equipamiento"]
+        coleccion_poderes = self.basededatos["Poderes"]
+        coleccion_habilidades = self.basededatos["Habilidades"]
+        lista_razas = list(coleccion_razas.find({}, {"Nombre": 1}))
+        lista_equipamiento = list(coleccion_equipamiento.find({}, {"Nombre": 1}))
+    
+        nombre = input("Ingrese el nombre del Personaje: ")
+    
+        print("\nRazas disponibles:")
+        for i, raza in enumerate(lista_razas):
+            print(f"{i+1}. {raza['Nombre']}")
+        print("0. Ninguna raza específica")  # Add option for no race
+    
+        while True:
+            try:
+                eleccion_raza = int(input("Elija la raza a la que va a pertenecer su personaje: ")) - 1
+                if 0 <= eleccion_raza < len(lista_razas) or eleccion_raza == -1:
+                    break
+                else:
+                    print("Opción inválida. Intente de nuevo.")
+            except ValueError:
+                print("Por favor, ingrese un número válido.")
+    
+        # Fetch selected race details (or None if no race chosen)
+        id_raza_seleccionada = lista_razas[eleccion_raza]["_id"] if eleccion_raza != -1 else None
+    
+        # Query for abilities and powers based on race selection
+        filtro_habilidades = (
+            {"$or": [{"Raza_ID": id_raza_seleccionada}, {"Raza_ID": {"$exists": False}}]}
+            if id_raza_seleccionada
+            else {}
+        )
+        filtro_poderes = (
+            {"$or": [{"Raza_ID": id_raza_seleccionada}, {"Raza_ID": {"$exists": False}}]}
+            if id_raza_seleccionada
+            else {}
+        )
+    
+        lista_poderes = list(coleccion_poderes.find(filtro_poderes, {"Nombre": 1}))
+        lista_habilidades = list(coleccion_habilidades.find(filtro_habilidades, {"Nombre": 1}))
+    
+        print("\nPoderes disponibles:")
+        for i, poder in enumerate(lista_poderes):
+            print(f"{i+1}. {poder['Nombre']}")
+    
+        print("\nHabilidades disponibles:")
+        for i, habilidad in enumerate(lista_habilidades):
+            print(f"{i+1}. {habilidad['Nombre']}")
+ 
+
+
 
 
 class AtlasGameMaster(AtlasBase):
@@ -573,9 +596,7 @@ class AtlasGameMaster(AtlasBase):
                 elif Decision == '1':
                     nuevonombre = input("Ingrese el nombre: ")
                     resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
-                    print("Habilidad Actualizada")
-
-                
+                    print("Habilidad Actualizada")                
     def Eliminar(self,Objeto):
         match Objeto:
             case "Estado":
@@ -696,5 +717,8 @@ class TypeAccount:
                 break  
             else:
                 print("Opción inválida. Intenta de nuevo.")
-      
-GameMaster1 = TypeAccount()
+
+
+Usuario = TypeAccount()
+Usuario.user.login()
+Usuario.user.CrearPersonaje()

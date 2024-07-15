@@ -1,3 +1,6 @@
+from clases import MongoClient
+
+
 class ModEquipmentUser:
     def __init__(self):
         # Equipamiento inicial (puedes modificarlo)
