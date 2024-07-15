@@ -140,8 +140,16 @@ class AtlasCliente(AtlasBase):
         coleccion_habilidades = self.basededatos["Habilidades"]
         lista_razas = list(coleccion_razas.find({}, {"Nombre": 1}))
         lista_equipamiento = list(coleccion_equipamiento.find({}, {"Nombre": 1}))
-    
-        nombre = input("Ingrese el nombre del Personaje: ")
+
+        while True:
+            nombre = input("Ingrese el nombre del Personaje: ")
+            #la primera condicion de este if sirve para que el nombre ingresado no tenga
+            #caracteres especiales como '_' , '+', '*' etc 
+            if any(caracter in string.punctuation for caracter in nombre):
+                print("No se permiten caracteres especiales.")
+            else:
+                print(f"El nombre '{nombre}' está correcto.")
+                break
     
         print("\nRazas disponibles:")
         for i, raza in enumerate(lista_razas):
@@ -823,3 +831,4 @@ class TypeAccount:
 Usuario = TypeAccount()
 Usuario.user.login()
 Usuario.user.CrearPersonaje()
+
