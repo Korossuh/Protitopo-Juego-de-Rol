@@ -391,8 +391,15 @@ class AtlasGameMaster(AtlasBase):
         coleccion = self.basededatos['Estados']
         while True: 
             print("Si desea agregar un estado, ingrese primero el nombre y descripcion del estado.")
-            nombre = input("Ingrese el nombre: ")
+            while True:
+                nombre = input("Ingrese el nombre: ")
+                if any(caracter in string.punctuation for caracter in nombre):
+                    print("No se permiten caracteres especiales.")
+                else:
+                    print(f"El nombre '{nombre}' está correcto.")
+                    break
             descripcion = input("Ingrese la descripción: ")
+            
             
             datos_ingreso = {'Nombre': nombre, 'Descripcion': descripcion}
             result = coleccion.insert_one(datos_ingreso)  # Store the result of the insert operation
@@ -406,7 +413,13 @@ class AtlasGameMaster(AtlasBase):
         coleccion = self.basededatos['Poderes']
         while True: 
             print("Si desea agregar un estado, ingrese primero el nombre y descripcion del estado.")
-            nombre = input("Ingrese el nombre: ")
+            while True:
+                nombre = input("Ingrese el nombre: ")
+                if any(caracter in string.punctuation for caracter in nombre):
+                    print("No se permiten caracteres especiales.")
+                else:
+                    print(f"El nombre '{nombre}' está correcto.")
+                    break
             descripcion = input("Ingrese la descripción: ")
             
             print("\nRazas disponibles:")
@@ -438,7 +451,13 @@ class AtlasGameMaster(AtlasBase):
         coleccion = self.basededatos['Habilidades']
         while True: 
             print("Si desea agregar una habilidad, ingrese primero el nombre y descripcion de la habilidad.")
-            nombre = input("Ingrese el nombre: ")
+            while True:
+                nombre = input("Ingrese el nombre: ")
+                if any(caracter in string.punctuation for caracter in nombre):
+                    print("No se permiten caracteres especiales.")
+                else:
+                    print(f"El nombre '{nombre}' está correcto.")
+                    break
             descripcion = input("Ingrese la descripción: ")
             
             print("\nRazas disponibles:")
@@ -478,7 +497,13 @@ class AtlasGameMaster(AtlasBase):
 
         while True:
             print("Si desea agregar equipamiento, ingrese primero el nombre y descripcion del Equipamiento.")
-            nombre = input("Ingrese el nombre: ")
+            while True:
+                nombre = input("Ingrese el nombre: ")
+                if any(caracter in string.punctuation for caracter in nombre):
+                    print("No se permiten caracteres especiales.")
+                else:
+                    print(f"El nombre '{nombre}' está correcto.")
+                    break
             descripcion = input("Ingrese la descripción: ")
             Ranura = ""
             Terminado = False
@@ -522,7 +547,13 @@ class AtlasGameMaster(AtlasBase):
         coleccion = self.basededatos['Razas']
         while True:
             print("Ingrese Nombre y Descripcion de la Raza que va a ingresar")
-            nombre = input("Nombre:")
+            while True:
+                nombre = input("Ingrese el nombre: ")
+                if any(caracter in string.punctuation for caracter in nombre):
+                    print("No se permiten caracteres especiales.")
+                else:
+                    print(f"El nombre '{nombre}' está correcto.")
+                    break
             Descripcion = input("Descripcion:")
 
             datos_ingreso = {'Nombre': nombre, 'Descripcion': Descripcion}
@@ -555,7 +586,13 @@ class AtlasGameMaster(AtlasBase):
     
                 Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
                 if Decision == '3':  # Use string comparison for input
-                    nuevonombre = input("Nuevo Nombre: ")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     nuevadescripcion = input("Nueva Descripcion: ")
                     resultado = coleccion.update_one({"_id": id_estado},
                                                      {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
@@ -591,7 +628,13 @@ class AtlasGameMaster(AtlasBase):
                         print("Por favor, ingrese un numero valido")
                 Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
                 if Decision == "4":
-                    nuevonombre = input("Ingrese el nuevo Nombre:")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     nuevadescripcion = input("Ingrese la nueva descripcion")
                     for i, raza in enumerate(razas):
                         print(f"{i+1}. {raza['Nombre']}")
@@ -651,7 +694,13 @@ class AtlasGameMaster(AtlasBase):
                         print("Por favor, ingrese un numero valido")
                 Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
                 if Decision == "4":
-                    nuevonombre = input("Ingrese el nuevo Nombre:")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     nuevadescripcion = input("Ingrese la nueva descripcion")
                     for i, raza in enumerate(razas):
                         print(f"{i+1}. {raza['Nombre']}")
@@ -712,7 +761,13 @@ class AtlasGameMaster(AtlasBase):
     
                 Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
                 if Decision == '3':  # Use string comparison for input
-                    nuevonombre = input("Nuevo Nombre: ")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     nuevadescripcion = input("Nueva Descripcion: ")
                     resultado = coleccion.update_one({"_id": raza_id},
                                                      {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
@@ -723,7 +778,13 @@ class AtlasGameMaster(AtlasBase):
                                  {"$set": {"Descripcion": nuevadescripcion}})
                     print("Raza Actualizada")
                 elif Decision == '1':
-                    nuevonombre = input("Nuevo Nombre: ")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
                     print("Raza Actualizada")
             case "Equipamiento":
@@ -754,7 +815,13 @@ class AtlasGameMaster(AtlasBase):
                         print("Por favor, ingrese un numero valido")
                 Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Ranura 4) Todo? ")
                 if Decision == "4":
-                    nuevo_nombre = input("Ingrese el nuevo nombre")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     nuevo_descripcion = input("Ingrese la nueva Descripcion ")
 
                     equipamiento_mod = list(self.equipamiento_personaje.keys())
@@ -771,7 +838,7 @@ class AtlasGameMaster(AtlasBase):
                                 print("Número inválido. Inténtalo de nuevo.")
                         except ValueError:
                             print("Ingresa un número válido.")
-                    resultado = collecion.update_one({"_id":id_equipamiento}, {"$set": {"Nombre": nuevo_nombre, "Descripcion": nuevo_descripcion,"Ranura": Ranura }})
+                    resultado = collecion.update_one({"_id":id_equipamiento}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevo_descripcion,"Ranura": Ranura }})
                     print("Equipamiento Actualizado:")
                 elif Decision == "3":
                     equipamiento_mod = list(self.equipamiento_personaje.keys())
@@ -794,7 +861,13 @@ class AtlasGameMaster(AtlasBase):
                     resultado = collecion.update_one({"_id": id_equipamiento}, {"$set": {"Descripcion" : nuevadescripcion} })
                     print("Habilidad Actualizada")
                 elif Decision == '1':
-                    nuevonombre = input("Ingrese el nombre: ")
+                    while True:
+                        nuevonombre = input("Ingrese el nombre: ")
+                        if any(caracter in string.punctuation for caracter in nuevonombre):
+                            print("No se permiten caracteres especiales.")
+                        else:
+                            print(f"El nombre '{nuevonombre}' está correcto.")
+                            break
                     resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
                     print("Habilidad Actualizada")                
     def Eliminar(self,Objeto):
@@ -921,5 +994,6 @@ class TypeAccount:
 
 Usuario = TypeAccount()
 Usuario.user.login()
+Usuario.user.CrearPersonaje()
 
 Usuario.user.ModificarEquipamiento()
