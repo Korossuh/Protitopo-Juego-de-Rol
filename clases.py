@@ -871,6 +871,7 @@ class AtlasGameMaster(AtlasBase):
                     resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
                     print("Habilidad Actualizada")                
     def Eliminar(self,Objeto):
+    
         match Objeto:
             case "Estado":
                 coleccion = self.basededatos["Estados"]
@@ -968,8 +969,212 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_equipamiento})
-            
+    def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids):
+        if isinstance(lista_ids, ObjectId):
+            lista_ids = [lista_ids]
+        elif not isinstance(lista_ids, list):  # Check if it's NOT a list
+            lista_ids = [lista_ids] 
+        coleccion = self.basededatos[nombre_coleccion]
+        resultado = coleccion.find({"_id": {"$in": [ObjectId(id) for id in lista_ids]}}, {"Nombre": 1}) 
+        return {str(r["_id"]): r["Nombre"] for r in resultado}
+    
+    def reemplazar_ids_por_nombres(self, documento, mapeo_ids_a_nombres):
+        for clave, valor in documento.items():
+            if isinstance(valor, ObjectId):
+                documento[clave] = mapeo_ids_a_nombres.get(str(valor), valor)
+            elif isinstance(valor, list):
+                documento[clave] = [self.reemplazar_ids_por_nombres(item, mapeo_ids_a_nombres) if isinstance(item, dict) else
+                                    mapeo_ids_a_nombres.get(str(item), item) if isinstance(item, ObjectId) else item for item in valor]
+            elif isinstance(valor, dict):
+                documento[clave] = self.reemplazar_ids_por_nombres(valor, mapeo_ids_a_nombres)
+        return documento
 
+    def modificar_personaje(self):
+
+        coleccion_personajes = self.basededatos["Personajes"]
+        personajes = list(coleccion_personajes.find({}, {"_id": 1, "Nombre": 1}))
+    
+        print("Personajes existentes:")
+        for i, personaje in enumerate(personajes):
+            print(f"{i+1}. {personaje['Nombre']}")
+    
+        while True:
+            try:
+                eleccion_personaje = int(input("Elija un personaje para modificar: ")) - 1
+                if 0 <= eleccion_personaje < len(personajes):
+                    personaje_seleccionado = personajes[eleccion_personaje]
+                    id_personaje = personaje_seleccionado["_id"]
+                    break
+                else:
+                    print("Opción inválida. Elija un número de la lista.")
+            except ValueError:
+                print("Ingrese un número válido.")
+    
+        personaje = coleccion_personajes.find_one({"_id": id_personaje})
+    
+        # Mapeos de IDs a nombres
+        mapeo_razas = self.obtener_nombres_por_ids("Razas", personaje["Raza"])
+        mapeo_estados = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
+        mapeo_habilidades = self.obtener_nombres_por_ids("Habilidades", personaje["Habilidad_ID"])
+        mapeo_equipamiento = self.obtener_nombres_por_ids("Equipamiento", personaje["Equipamiento_ID"])
+        mapeo_poderes = self.obtener_nombres_por_ids("Poderes", personaje["Poderes_ID"])
+    
+        # Unir todos los mapeos en uno solo
+        mapeo_ids_a_nombres = {**mapeo_razas, **mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes}
+    
+        # Reemplazar IDs en el personaje
+        personaje_con_nombres = self.reemplazar_ids_por_nombres(personaje, mapeo_ids_a_nombres)
+    
+        # Mostrar campos modificables
+        campos_modificables = ["Raza", "Nivel", "HitPoints", "Estado_ID", "Habilidad_ID", "Equipamiento_ID", "Poderes_ID", "Atributos"]
+        print("\nCampos que puedes modificar:")
+        for campo in campos_modificables:
+                print(f"- {campo}")
+        
+    def modificar_personaje(self):
+        coleccion_personajes = self.basededatos["Personajes"]
+        personajes = list(coleccion_personajes.find({}, {"_id": 1, "Nombre": 1}))
+    
+        print("Personajes existentes:")
+        for i, personaje in enumerate(personajes):
+            print(f"{i+1}. {personaje['Nombre']}")
+    
+        while True:
+            try:
+                eleccion_personaje = int(input("Elija un personaje para modificar: ")) - 1
+                if 0 <= eleccion_personaje < len(personajes):
+                    personaje_seleccionado = personajes[eleccion_personaje]
+                    id_personaje = personaje_seleccionado["_id"]
+                    break
+                else:
+                    print("Opción inválida. Elija un número de la lista.")
+            except ValueError:
+                print("Ingrese un número válido.")
+    
+        personaje = coleccion_personajes.find_one({"_id": id_personaje})
+    
+        # Mapeos de IDs a nombres
+        mapeo_razas = self.obtener_nombres_por_ids("Razas", personaje["Raza"])
+        mapeo_estados = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
+        mapeo_habilidades = self.obtener_nombres_por_ids("Habilidades", personaje["Habilidad_ID"])
+        mapeo_equipamiento = self.obtener_nombres_por_ids("Equipamiento", personaje["Equipamiento_ID"])
+        mapeo_poderes = self.obtener_nombres_por_ids("Poderes", personaje["Poderes_ID"])
+    
+        # Unir todos los mapeos en uno solo
+        mapeo_ids_a_nombres = {**mapeo_razas, **mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes}
+    
+        # Reemplazar IDs en el personaje
+        personaje_con_nombres = self.reemplazar_ids_por_nombres(personaje, mapeo_ids_a_nombres)
+    
+        # Mostrar campos modificables
+        campos_modificables = ["Raza", "Nivel", "HitPoints", "Estado_ID", "Habilidad_ID", "Equipamiento_ID", "Poderes_ID", "Atributos"]
+        print("\nCampos que puedes modificar:")
+        for campo in campos_modificables:
+            print(f"- {campo}")
+    
+        while True:
+            campo_a_modificar = input("Elija un campo para modificar (o 'listo' para terminar): ")
+            if campo_a_modificar.lower() == 'listo':
+                break
+    
+            elif campo_a_modificar in campos_modificables:
+                valor_actual = personaje_con_nombres[campo_a_modificar]
+    
+                if isinstance(valor_actual, list):
+                    print(f"\nValores actuales de {campo_a_modificar}:")
+                    for i, item in enumerate(valor_actual):
+                        # Reemplazar IDs por nombres en la lista de valores actuales
+                        if campo_a_modificar != "Atributos":  # Excluir atributos de manipulacion de ID
+                            item_nombre = mapeo_ids_a_nombres.get(item, item)
+                            print(f"{i+1}. {item_nombre}")
+                        else:
+                            print(f"{i+1}. {item}")  # Mostrar nombre de atributos
+    
+                    while True:  # Loop para las acciones a o e
+                        accion = input(
+                            f"Desea agregar (a) o eliminar (e) en {campo_a_modificar}? (o 'listo' para volver): "
+                        )
+                        if accion.lower() == 'listo':
+                            break
+                        elif accion.lower() in ['a', 'e']:
+                            if (
+                                campo_a_modificar == "Habilidad_ID"
+                                and accion.lower() == 'e'
+                                and i < 2
+                            ):
+                                print("No puedes eliminar las dos primeras habilidades.")
+                                continue
+                            elif (
+                                campo_a_modificar in ["Equipamiento_ID", "Poderes_ID"]
+                                and accion.lower() == 'e'
+                                and i == 0
+                            ):
+                                print("No puedes eliminar el primer elemento.")
+                                continue
+    
+                            if accion.lower() == 'a':
+                                # Mostrar lista de opciones para campos ID y Raza
+                                if campo_a_modificar in ["Estado_ID", "Habilidad_ID", "Equipamiento_ID", "Poderes_ID", "Raza"]:
+                                    coleccion_opciones = self.basededatos[campo_a_modificar[:-3]] if campo_a_modificar != "Raza" else self.basededatos[campo_a_modificar]
+                                    opciones = list(coleccion_opciones.find({}, {"Nombre": 1, "Descripcion": 1}))
+    
+                                    print(f"\nOpciones disponibles para {campo_a_modificar}:")
+                                    for j, opcion in enumerate(opciones):
+                                        print(f"{j+1}. {opcion['Nombre']}: {opcion['Descripcion']}")
+    
+                                    while True:
+                                        try:
+                                            eleccion_opcion = int(input("Elija una opción: ")) - 1
+                                            if 0 <= eleccion_opcion < len(opciones):
+                                                personaje[campo_a_modificar].append(str(opciones[eleccion_opcion]['_id'])) if isinstance(personaje[campo_a_modificar], list) else personaje.__setitem__(campo_a_modificar, str(opciones[eleccion_opcion]['_id']))
+                                                break
+                                            else:
+                                                print("Opción inválida.")
+                                        except ValueError:
+                                            print("Ingrese un número válido.")
+    
+                            elif accion.lower() == 'e':
+                                try:
+                                    indice = int(input("Ingrese el índice del elemento a eliminar: ")) - 1
+                                    if 0 <= indice < len(personaje[campo_a_modificar]):
+                                        del personaje[campo_a_modificar][indice]
+                                    else:
+                                        print("Índice inválido.")
+                                except ValueError:
+                                    print("Ingrese un número válido.")
+    
+                            # Insertar cambios a la base de datos
+                            coleccion_personajes.update_one({"_id": id_personaje}, {"$set": {campo_a_modificar: personaje[campo_a_modificar]}})
+                            print(f"{campo_a_modificar} modificado con éxito.")
+                            break  # Salir del loop
+    
+                        else:
+                            print("Acción inválida. Elija 'a', 'e', o 'listo'.")
+    
+                else:  # Manejo para campos que no son listas
+                    # Mostrar lista de opciones para el campo Raza o Estado_ID
+                    if campo_a_modificar in ["Raza", "Estado_ID"]:
+                        coleccion_opciones = self.basededatos["Estados"] if campo_a_modificar == "Estado_ID" else self.basededatos["Razas"]
+                        opciones = list(coleccion_opciones.find({}, {"Nombre": 1, "Descripcion": 1}))
+    
+                        print(f"\nOpciones disponibles para {campo_a_modificar}:")
+                        for j, opcion in enumerate(opciones):
+                            print(f"{j+1}. {opcion['Nombre']}: {opcion['Descripcion']}")
+    
+                        while True:
+                            try:
+                                eleccion_opcion = int(input("Elija una opción: ")) - 1
+                                if 0 <= eleccion_opcion < len(opciones):
+                                    personaje[campo_a_modificar] = str(opciones[eleccion_opcion]['_id'])  # Reemplazar con la seleccion de ID
+                                    break
+                                else:
+                                    print("Opción inválida.")
+                            except ValueError:
+                                print("Ingrese un número válido.")
+    
+                        # Insertar cambios a la base de datos
+                        coleccion_personajes.update_one({"_id": id_personaje}, {"$set": {campo_a_modificar: personaje[campo_a_modificar]}})
+                        print(f"{campo_a_modificar} modificado con éxito.")
 class TypeAccount:
     def __init__(self):
         print("┌────────────────────────────┐")
@@ -993,7 +1198,4 @@ class TypeAccount:
 
 
 Usuario = TypeAccount()
-Usuario.user.login()
-Usuario.user.CrearPersonaje()
-
-Usuario.user.ModificarEquipamiento()
+Usuario.user.modificar_personaje()
