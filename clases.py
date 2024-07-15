@@ -157,10 +157,10 @@ class AtlasCliente(AtlasBase):
             except ValueError:
                 print("Por favor, ingrese un número válido.")
     
-        # Fetch selected race details (or None if no race chosen)
+        # Conseguir id de la raza
         id_raza_seleccionada = lista_razas[eleccion_raza]["_id"]
     
-        # Query for abilities and powers based on race selection
+        # Hacer Query para filtrar habilidades y poderes segun la raza seleccionada
         filtro_habilidades = (
             {"$or": [{"Raza": id_raza_seleccionada}, {"Raza": {"$exists": False}}]}
             if id_raza_seleccionada
@@ -175,7 +175,7 @@ class AtlasCliente(AtlasBase):
         lista_poderes = list(coleccion_poderes.find(filtro_poderes, {"Nombre": 1}))
         lista_habilidades = list(coleccion_habilidades.find(filtro_habilidades, {"Nombre": 1}))
     
-        # Display and select powers
+        # Mostrar Poderes
         print("\nPoderes disponibles:")
         for i, poder in enumerate(lista_poderes):
             print(f"{i+1}. {poder['Nombre']}")
@@ -192,15 +192,15 @@ class AtlasCliente(AtlasBase):
             except ValueError:
                 print("Por favor, ingrese un número válido.")
     
-        # Display and select abilities
+        # Visualizacion y seleccion de habilidades
         print("\nHabilidades disponibles:")
         for i, habilidad in enumerate(lista_habilidades):
             print(f"{i+1}. {habilidad['Nombre']}")
     
-        habilidades_seleccionadas = []  # List to store selected abilities
+        habilidades_seleccionadas = []  # Lista para almacenar las habilidades
 
         print("\nHabilidades disponibles:")
-        for i in range(2):  # Loop to select two abilities
+        for i in range(2):  # For loop para elegir 2 habilidades
             for j, habilidad in enumerate(lista_habilidades):
                 print(f"{j+1}. {habilidad['Nombre']}")
     
@@ -208,7 +208,7 @@ class AtlasCliente(AtlasBase):
                 try:
                     eleccion_habilidad = int(input("Elija una habilidad: ")) - 1
                     if 0 <= eleccion_habilidad < len(lista_habilidades):
-                        habilidades_seleccionadas.append(lista_habilidades.pop(eleccion_habilidad))  # Remove and store the selected ability
+                        habilidades_seleccionadas.append(lista_habilidades.pop(eleccion_habilidad))  
                         break
                     else:
                         print("Elección inválida. Por favor elija una habilidad válida.")
@@ -251,7 +251,7 @@ class AtlasCliente(AtlasBase):
             while True:
                 try:
                     atributo_elegido = input("Elija un atributo para aumentar (o 'listo' para terminar): ").upper()
-                    if atributo_elegido == 'LISTO' and all(valor > 0 for valor in atributos.values()):  # Check if all attributes have at least 1 point
+                    if atributo_elegido == 'LISTO' and all(valor > 0 for valor in atributos.values()):  # ver si todos los atributos tienen almenos un punto
                         break
                     elif atributo_elegido in atributos:
                         puntos_a_asignar = int(input("¿Cuántos puntos desea asignar? "))
@@ -266,7 +266,7 @@ class AtlasCliente(AtlasBase):
                 except ValueError:
                     print("Por favor, ingrese un número válido.")
     
-        # Insert character data into database
+        # Insertar personaje en la Base de Datos
         datos_ingreso = {
             "Nombre": nombre,
             "ID_Jugador": ObjectId(self.Id_Usuario),
