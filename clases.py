@@ -131,7 +131,24 @@ class AtlasCliente(AtlasBase):
             else:
                 print(f"{clave}: {valor}")
     def ModificarEquipamiento(self):
-        pass
+        coleccion = self.basededatos["Personajes"]
+        Personajes = list(coleccion.find({"ID_Jugador": self.Id_Usuario} ,{"Nombre": 1}))
+        print("Sus Personajes: ")
+        for i,personaje in enumerate(Personajes):
+            print(f"{i+1}. {personaje["Nombre"]}")
+            while True:
+                try:
+                    eleccion_personaje = int(input()) -1
+                    if 0 <= eleccion_personaje < len(Personajes):
+                        personaje_seleccionado = Personajes[eleccion_personaje]
+                        id_personaje = personaje_seleccionado["_id"]
+                        break
+                    else: 
+                        print("Seleccion invalida ")
+                except ValueError:
+                    print("Por favor, ingrese un numero valido")
+            self.VerFichasPersonajes(id_personaje)
+        
     def CrearPersonaje(self):
         coleccion_personajes = self.basededatos["Personajes"]
         coleccion_razas = self.basededatos["Razas"]
@@ -822,4 +839,4 @@ class TypeAccount:
 
 Usuario = TypeAccount()
 Usuario.user.login()
-Usuario.user.CrearPersonaje()
+Usuario.user.VerFichasPersonajes()
