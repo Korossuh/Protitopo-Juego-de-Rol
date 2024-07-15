@@ -1210,6 +1210,57 @@ class AtlasGameMaster(AtlasBase):
                         # Insertar cambios a la base de datos
                         coleccion_personajes.update_one({"_id": id_personaje}, {"$set": {campo_a_modificar: personaje[campo_a_modificar]}})
                         print(f"{campo_a_modificar} modificado con éxito.")
+    def VerPartida(self):
+        coleccion_partida = self.basededatos["Partida"]
+        partidas = list(coleccion_partida.find({}, {"_id": 1, "Nombre": 1}))  # Obtener nombre de las partidas
+    
+        print("Partidas existentes:")
+        for i, partida in enumerate(partidas):
+            print(f"{i+1}. {partida['Nombre']}")
+    
+        while True:
+            try:
+                eleccion_partida = int(input("Elija una partida para ver: ")) - 1
+                if 0 <= eleccion_partida < len(partidas):
+                    partida_seleccionada = partidas[eleccion_partida]
+                    id_partida = partida_seleccionada["_id"]
+                    break
+                else:
+                    print("Opción inválida. Elija un número de la lista.")
+            except ValueError:
+                print("Ingrese un número válido.")
+    
+        partida = coleccion_partida.find_one({"_id": id_partida})
+        personajes_ids = partida.get("Personajes", [])  # Obtener lista de ids de la partida seleccionada
+    
+        if not personajes_ids:
+            print(f"La partida '{partida['Nombre']}' no tiene personajes.")
+            return
+    
+        # Obtener detalles del personaje y asignar nombres a las IDs
+        personajes_detalles = []
+        for personaje_id in personajes_ids:
+            personaje = self.basededatos["Personajes"].find_one({"_id": ObjectId(personaje_id)})
+            if personaje:
+                # Resolve Raza and Estado_ID
+                raza = self.obtener_nombres_por_ids("Razas", personaje["Raza"])
+                estado = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
+    
+                personajes_detalles.append({
+                    "Nombre": personaje["Nombre"],
+                    "Raza": raza.get(personaje["Raza"], personaje["Raza"]),  # Obtener nombre de Raza
+                    "Nivel": personaje["Nivel"],
+                    "Estado_ID": estado.get(personaje["Estado_ID"], personaje["Estado_ID"])  # Obtener nombre del estado
+                })
+    
+        # Display character details in a table-like format
+        print(f"\nPersonajes en la partida '{partida['Nombre']}':")
+        print("-----------------------------------")
+        print("|{:<15}|{:<15}|{:<8}|{:<15}|".format("Nombre", "Raza", "Nivel", "Estado"))
+        print("-----------------------------------")
+        for personaje in personajes_detalles:
+            print("|{:<15}|{:<15}|{:<8}|{:<15}|".format(personaje["Nombre"], personaje["Raza"], personaje["Nivel"], personaje["Estado_ID"]))
+        print("-----------------------------------")
 class TypeAccount:
     def __init__(self):
         print("┌────────────────────────────┐")
@@ -1233,4 +1284,4 @@ class TypeAccount:
 
 
 Usuario = TypeAccount()
-Usuario.user.modificar_personaje()
+Usuario.user.VerPartida()
