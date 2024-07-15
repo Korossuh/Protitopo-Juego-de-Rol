@@ -1,13 +1,8 @@
-from pymongo import MongoClient
 from getpass import getpass
-import bcrypt
-import string
 from bson.binary import Binary
 from bson.objectid import ObjectId
-from clases import AtlasBase
-from clases import AtlasCliente
-from clases import AtlasGameMaster
 from clases import TypeAccount
+
 
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
@@ -15,12 +10,12 @@ url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0q
 def menu_cliente(cliente):
     while True:
         print("\n╔═══════════════════════════════╗")
-        print("║     ✨ Menú del Jugador ✨     ║")
+        print("║     ✨ Menú del Jugador ✨    ║")
         print("╠═══════════════════════════════╣")
-        print("║ 1. 📜 Ver Fichas de Personajes ║")
-        print("║ 2. ⚙️ Modificar Equipamiento   ║")
-        print("║ 3. 👤 Crear Personaje          ║")
-        print("║ 4. 🚪 Salir                     ║")
+        print("║ 1. 📜 Ver Fichas de Personajes║")
+        print("║ 2. ⚙️  Modificar Equipamiento  ║")
+        print("║ 3. 👤 Crear Personaje         ║")
+        print("║ 4. 🚪 Salir                   ║")
         print("╚═══════════════════════════════╝")
         opcion = input("👉 Elija una opción: ")
 
@@ -54,8 +49,7 @@ def menu_GameMaster(GameMaster):
         opcion = input("👉 Elija una opción: ")
 
         if opcion == '1':
-            pass
-            
+            GameMaster.user.AgregarEstado()
         elif opcion == '2':
             GameMaster.user.AgregarPoder()
         elif opcion == '3':

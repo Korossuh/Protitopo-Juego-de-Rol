@@ -4,8 +4,10 @@ import bcrypt
 import string
 from bson.binary import Binary
 from bson.objectid import ObjectId
+
 url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
+
 class AtlasBase:  # Clase comun para funcionalidad con la base de datos
     def __init__(self, url, dbname):
         print(f"┌────────────────────────────┐\n│ {'🧙‍♂️ Benvenuto, ' + self.__class__.__name__ + ' ⚔️'} │\n└────────────────────────────┘")
@@ -178,7 +180,7 @@ class AtlasCliente(AtlasBase): #Clase para el Jugador
             ))
     
             if not lista_equipamiento:
-                print("No hay más equipamiento disponible para equipar.")
+                print("\nNo hay más equipamiento disponible para equipar.")
             else:
                 print("\nEquipamiento disponible:")
                 for i, equip in enumerate(lista_equipamiento):
@@ -191,15 +193,17 @@ class AtlasCliente(AtlasBase): #Clase para el Jugador
                             equipamiento_seleccionado = lista_equipamiento[eleccion_equipamiento]
                             id_equipamiento = str(equipamiento_seleccionado["_id"])
                             equipamiento_actual.append(id_equipamiento)
+                            print("\nEquipamiento modificado con éxito.")
                             break
                         else:
                             print("Elección inválida. Por favor elija un equipamiento válido.")
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
+            
         elif decision == "2":  # Desequipar
             # Mostrar equipamiento ya equipado
             if not equipamiento_actual:
-                print("El personaje no tiene ningún equipamiento.")
+                print("\nEl personaje no tiene ningún equipamiento.")
             else:
                 nombres_equipamiento = self.obtener_nombres_por_ids("Equipamiento", equipamiento_actual)
                 print("\nEquipamiento del personaje:")
@@ -211,18 +215,17 @@ class AtlasCliente(AtlasBase): #Clase para el Jugador
                         eleccion_desequipar = int(input("Elija un equipamiento para desequipar: ")) - 1
                         if 0 <= eleccion_desequipar < len(equipamiento_actual):
                             equipamiento_actual.pop(eleccion_desequipar)  # Remover equipamiento ya ocupado
+                            print("\nEquipamiento desequipado.")
                             break
                         else:
                             print("Elección inválida. Por favor elija un equipamiento válido.")
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
-    
                # Update la coleccion
         coleccion_personajes.update_one(
             {"_id": id_personaje},
             {"$set": {"Equipamiento_ID": equipamiento_actual}}
         )
-        print("Equipamiento modificado con éxito.")
         
     def CrearPersonaje(self): #Meotodo para crear personajes
         coleccion_personajes = self.basededatos["Personajes"]
@@ -328,7 +331,7 @@ class AtlasCliente(AtlasBase): #Clase para el Jugador
             print(f"{i+1}. {equipamiento['Nombre']}")
         while True:
             try:
-                eleccion_equipamiento = int(input()) -1
+                eleccion_equipamiento = int(input("Cual desea seleccionar: ")) -1
                 if 0 <= eleccion_equipamiento < len(lista_equipamiento):
                     equipamiento_seleccionado = lista_equipamiento[eleccion_equipamiento]
                     id_equipamiento = equipamiento_seleccionado["_id"]
@@ -414,7 +417,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
         razas = list(collecion.find({},{"Nombre":1}))
         coleccion = self.basededatos['Poderes']
         while True: 
-            print("Si desea agregar un estado, ingrese primero el nombre y descripcion del estado.")
+            print("Si desea agregar un Poder, ingrese primero el nombre y descripcion del estado.")
             while True:
                 nombre = input("Ingrese el nombre: ")
                 if any(caracter in string.punctuation for caracter in nombre):
@@ -468,7 +471,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
             
             while True: 
                 try:
-                    eleccion_raza = int(input("Elija la raza a la que pertenece el poder (o 0 si no aplica): ")) - 1
+                    eleccion_raza = int(input("Elija la raza a la que pertenece la habilidad (o 0 si no aplica): ")) - 1
                     if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
                         break  
                     else:
@@ -480,7 +483,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                 datos_ingreso['Raza'] = razas[eleccion_raza]['_id'] 
     
             resultado = coleccion.insert_one(datos_ingreso)
-            print(f"Poder agregado con ID: {resultado.inserted_id}")
+            print(f"Habilidad agregada con ID: {resultado.inserted_id}")
 
             continuar = input("¿Desea agregar otro poder? (s/n): ")
             if continuar.lower() != 's':
@@ -560,8 +563,8 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
 
             datos_ingreso = {'Nombre': nombre, 'Descripcion': Descripcion}
             resultado = coleccion.insert_one(datos_ingreso)
-            print(f"Estado Ingresado con la Siguiente ID: {resultado.inserted_id}")
-            continuar = input("¿Desea agregar otro estado? (s/n): ")
+            print(f"Raza Ingresado con la Siguiente ID: {resultado.inserted_id}")
+            continuar = input("¿Desea agregar otra raza? (s/n): ")
             if continuar.lower() !='s':
                 break
     def Modificar(self, Objeto):
@@ -828,7 +831,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                 equipamiento_mod = list(self.equipamiento_personaje.keys())
                 collecion = self.basededatos["Equipamiento"]
                 Equipamientos = list(collecion.find({},{"_id":1,"Nombre": 1}))
-                print("Habilidades Existentes: (Seleccione el numero que va a modificar)")
+                print("Equipamientos Existentes: (Seleccione el numero que va a modificar)")
                 for i, equipamiento in enumerate(Equipamientos):
                     print(f"{i+1}. {equipamiento['Nombre']}")
                 while True:
@@ -839,7 +842,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                             id_equipamiento = equipamiento_seleccionado["_id"]
                             break
                         else: 
-                            print("Eleccion Invalida, por favor elija una habilidad valida ")
+                            print("Eleccion Invalida, por favor elija un equipamiento valido ")
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
                 while True:
@@ -889,7 +892,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                     elif Decision == '2':
                         nuevadescripcion = input("Ingrese la nueva Descripcion: ")
                         resultado = collecion.update_one({"_id": id_equipamiento}, {"$set": {"Descripcion" : nuevadescripcion} })
-                        print("Habilidad Actualizada")
+                        print("Equipamiento Actualizado")
                     elif Decision == '1':
                         while True:
                             nuevonombre = input("Ingrese el nombre: ")
@@ -899,7 +902,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                                 print(f"El nombre '{nuevonombre}' está correcto.")
                                 break
                         resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
-                        print("Habilidad Actualizada")  
+                        print("Equipamiento Actualizado")  
                     else:
                         print("Ingrese un numero valido")    
 
@@ -1006,6 +1009,7 @@ class AtlasGameMaster(AtlasBase): #Clase para las facultades del GM
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_equipamiento})
+                print("El equipamiento se ha eliminado")
     def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids):
         if isinstance(lista_ids, ObjectId):
             lista_ids = [lista_ids]
@@ -1288,10 +1292,3 @@ class TypeAccount:
             return "Jugador"
         elif isinstance(self.user, AtlasGameMaster):
             return "GameMaster"
-
-
-Usuario = TypeAccount()
-if Usuario.obtener_cuenta() == "Jugador":
-    print("Eres un Jugador")
-elif Usuario.obtener_cuenta() == "GameMaster" :
-    print("Eres un GameMaster")
