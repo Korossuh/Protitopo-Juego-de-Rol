@@ -61,7 +61,9 @@ class AtlasCliente(AtlasBase):
             stored_hashed_password_binary = user_document["contraseña"]
             # Comparar las contraseñas.
             if bcrypt.checkpw(contraseña.encode(), stored_hashed_password_binary):
-                self.Id_Usuario = user_document["_id"]
+                self.Id_Usuario = ObjectId(user_document["_id"])
+                self.Id_Usuario = ObjectId(self.Id_Usuario)
+                
                 self.Nombre_usuario = usuario
                 print(self.Id_Usuario)
                 print("Autenticación exitosa como Jugador")
@@ -77,28 +79,35 @@ class AtlasCliente(AtlasBase):
         print("Sus Personajes: ")
         for i,personaje in enumerate(Personajes):
             print(f"{i+1}. {personaje["Nombre"]}")
-            while True:
-                try:
-                    eleccion_personaje = int(input()) -1
-                    if 0 <= eleccion_personaje < len(Personajes):
-                        personaje_seleccionado = Personajes[eleccion_personaje]
-                        id_personaje = personaje_seleccionado["_id"]
-                        break
-                    else: 
-                        print("Seleccion invalida ")
-                except ValueError:
-                    print("Por favor, ingrese un numero valido")
+        while True:
+            try:
+                eleccion_personaje = int(input("Elija un poder: ")) - 1
+                if 0 <= eleccion_personaje < len(Personajes):
+                    personaje_seleccionado = Personajes[eleccion_personaje]
+                    id_personaje = personaje_seleccionado["_id"]
+                    self.VerFichasPersonajes(id_personaje)
+                    break
+                else:
+                    print("Elección inválida. Por favor elija un personaje válido.")
+            except ValueError:
+                print("Por favor, ingrese un número válido.")
             self.VerFichasPersonajes(id_personaje)
 
     def obtener_nombres_por_ids(self, nombre_coleccion, lista_ids):
+        if isinstance(lista_ids, ObjectId):  # Revisar si es una instancia de ObjectId
+            lista_ids = [lista_ids]  # convertir a la lista
+        elif isinstance(lista_ids, str):  # Revisar si es una string
+            lista_ids = [ObjectId(lista_ids)]  # Convertir la string a object id para la lista
+        else:  
+            lista_ids = [ObjectId(id) for id in lista_ids]  # Convertir toda las ids en la lista a ObjectId
         coleccion = self.basededatos[nombre_coleccion]
-        resultado = coleccion.find({"_id": {"$in": [ObjectId(id) for id in lista_ids]}}, {"Nombre": 1})  # Convert strings to ObjectIds
-        return {str(r["_id"]): r["Nombre"] for r in resultado} 
+        resultado = coleccion.find({"_id": {"$in": lista_ids}}, {"Nombre": 1})  # query para conseguir el nombre correspondiente
+        return {str(r["_id"]): r["Nombre"] for r in resultado}
 
     def reemplazar_ids_por_nombres(self, documento, mapeo_ids_a_nombres):
         for clave, valor in documento.items():
-            if isinstance(valor, str) and ObjectId.is_valid(valor):  # Check for valid ObjectId strings
-                documento[clave] = mapeo_ids_a_nombres.get(valor, valor)  # Replace if found
+            if isinstance(valor, str) and ObjectId.is_valid(valor):  # Revisar por string validas 
+                documento[clave] = mapeo_ids_a_nombres.get(valor, valor)  # Reemplazar por si es valida
             elif isinstance(valor, list):
                 documento[clave] = [self.reemplazar_ids_por_nombres(item, mapeo_ids_a_nombres) if isinstance(item, dict) else
                                     mapeo_ids_a_nombres.get(item, item) if ObjectId.is_valid(item) else item for item in valor]
@@ -111,13 +120,14 @@ class AtlasCliente(AtlasBase):
         coleccion = self.basededatos["Personajes"]
         personaje = coleccion.find_one({"_id": id_personaje}, {"_id": 0})
 
-        # Mapeos de IDs a nombres: (Simplified since the field name is the same)
+        # Mapeos de IDs a nombres
+        mapeo_razas = self.obtener_nombres_por_ids("Razas", personaje["Raza"])
         mapeo_estados = self.obtener_nombres_por_ids("Estados", personaje["Estado_ID"])
         mapeo_habilidades = self.obtener_nombres_por_ids("Habilidades", personaje["Habilidad_ID"])
         mapeo_equipamiento = self.obtener_nombres_por_ids("Equipamiento", personaje["Equipamiento_ID"])
         mapeo_poderes = self.obtener_nombres_por_ids("Poderes", personaje["Poderes_ID"])
         # Unir todos los mapeos en uno solo
-        mapeo_ids_a_nombres = {**mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes}
+        mapeo_ids_a_nombres = {**mapeo_estados, **mapeo_habilidades, **mapeo_equipamiento, **mapeo_poderes, **mapeo_razas}
 
         # Reemplazar IDs en el personaje
         personaje_con_nombres = self.reemplazar_ids_por_nombres(personaje, mapeo_ids_a_nombres)
@@ -131,23 +141,88 @@ class AtlasCliente(AtlasBase):
             else:
                 print(f"{clave}: {valor}")
     def ModificarEquipamiento(self):
-        coleccion = self.basededatos["Personajes"]
-        Personajes = list(coleccion.find({"ID_Jugador": self.Id_Usuario} ,{"Nombre": 1}))
-        print("Sus Personajes: ")
-        for i,personaje in enumerate(Personajes):
-            print(f"{i+1}. {personaje["Nombre"]}")
-            while True:
-                try:
-                    eleccion_personaje = int(input()) -1
-                    if 0 <= eleccion_personaje < len(Personajes):
-                        personaje_seleccionado = Personajes[eleccion_personaje]
-                        id_personaje = personaje_seleccionado["_id"]
-                        break
-                    else: 
-                        print("Seleccion invalida ")
-                except ValueError:
-                    print("Por favor, ingrese un numero valido")
-            self.VerFichasPersonajes(id_personaje)
+        coleccion_personajes = self.basededatos["Personajes"]
+        coleccion_equipamiento = self.basededatos["Equipamiento"]
+    
+        # Mostrar la lista de personajes a elegir
+        Personajes = list(coleccion_personajes.find({"ID_Jugador": self.Id_Usuario}, {"Nombre": 1, "Equipamiento_ID": 1}))
+        print("Sus Personajes:")
+        for i, personaje in enumerate(Personajes):
+            print(f"{i+1}. {personaje['Nombre']}")
+    
+        while True:
+            try:
+                eleccion_personaje = int(input("Elija un personaje: ")) - 1
+                if 0 <= eleccion_personaje < len(Personajes):
+                    personaje_seleccionado = Personajes[eleccion_personaje]
+                    id_personaje = personaje_seleccionado["_id"]
+                    break
+                else:
+                    print("Elección inválida. Por favor elija un personaje válido.")
+            except ValueError:
+                print("Por favor, ingrese un número válido.")
+        equipamiento_actual = personaje_seleccionado.get("Equipamiento_ID", [])
+        # Decision para equipar o Desequipar
+        while True:
+            decision = input("\n¿Qué desea hacer?\n1. Equipar\n2. Desequipar\n")
+            if decision in ["1", "2"]:
+                break
+            else:
+                print("Opción inválida. Elija 1 para equipar o 2 para desequipar.")
+    
+        if decision == "1":  # Equip
+            # Filtro para excluir equipamiento ya equipado
+            lista_equipamiento = list(coleccion_equipamiento.find(
+                {"_id": {"$nin": [ObjectId(equip_id) for equip_id in equipamiento_actual]}},  
+                {"Nombre": 1}
+            ))
+    
+            if not lista_equipamiento:
+                print("No hay más equipamiento disponible para equipar.")
+            else:
+                print("\nEquipamiento disponible:")
+                for i, equip in enumerate(lista_equipamiento):
+                    print(f"{i+1}. {equip['Nombre']}")
+    
+                while True:
+                    try:
+                        eleccion_equipamiento = int(input("Elija un equipamiento: ")) - 1
+                        if 0 <= eleccion_equipamiento < len(lista_equipamiento):
+                            equipamiento_seleccionado = lista_equipamiento[eleccion_equipamiento]
+                            id_equipamiento = str(equipamiento_seleccionado["_id"])
+                            equipamiento_actual.append(id_equipamiento)
+                            break
+                        else:
+                            print("Elección inválida. Por favor elija un equipamiento válido.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+        elif decision == "2":  # Unequip
+            # Mostrar equipamiento ya equipado
+            if not equipamiento_actual:
+                print("El personaje no tiene ningún equipamiento.")
+            else:
+                nombres_equipamiento = self.obtener_nombres_por_ids("Equipamiento", equipamiento_actual)
+                print("\nEquipamiento del personaje:")
+                for i, equip_id in enumerate(equipamiento_actual):
+                    print(f"{i+1}. {nombres_equipamiento.get(equip_id, equip_id)}")
+    
+                while True:
+                    try:
+                        eleccion_desequipar = int(input("Elija un equipamiento para desequipar: ")) - 1
+                        if 0 <= eleccion_desequipar < len(equipamiento_actual):
+                            equipamiento_actual.pop(eleccion_desequipar)  # Remover equipamiento ya ocupado
+                            break
+                        else:
+                            print("Elección inválida. Por favor elija un equipamiento válido.")
+                    except ValueError:
+                        print("Por favor, ingrese un número válido.")
+    
+               # Update la coleccion
+        coleccion_personajes.update_one(
+            {"_id": id_personaje},
+            {"$set": {"Equipamiento_ID": equipamiento_actual}}
+        )
+        print("Equipamiento modificado con éxito.")
         
     def CrearPersonaje(self):
         coleccion_personajes = self.basededatos["Personajes"]
@@ -245,8 +320,7 @@ class AtlasCliente(AtlasBase):
             else:
                 print("\nSegunda habilidad seleccionada.")
     
-        id_habilidades = [habilidad["_id"] for habilidad in habilidades_seleccionadas] 
-
+        id_habilidades = [habilidad["_id"] for habilidad in habilidades_seleccionadas]
         print("\nEquipamiento Disponible: ")
 
                     
@@ -294,15 +368,15 @@ class AtlasCliente(AtlasBase):
         # Insertar personaje en la Base de Datos
         datos_ingreso = {
             "Nombre": nombre,
-            "ID_Jugador": ObjectId(self.Id_Usuario),
+            "ID_Jugador": self.Id_Usuario,
             "Nombre_Jugador": self.Nombre_usuario,
             "HitPoints": 10,
-            "Raza": ObjectId(id_raza_seleccionada) if id_raza_seleccionada else None,
+            "Raza": str(id_raza_seleccionada) if id_raza_seleccionada else None,
             "Nivel": 1,
-            "Estado_ID": ObjectId("6694921ac4c85e562c0522d0"),
-            "Habilidad_ID": id_habilidades,
-            "Equipamiento_ID": [id_equipamiento],
-            "Poderes_ID": [id_poder],
+            "Estado_ID": "6694921ac4c85e562c0522d0",
+            "Habilidad_ID": [str(id) for id in id_habilidades],
+            "Equipamiento_ID": [str(id_equipamiento)],
+            "Poderes_ID": [str(id_poder)],
             "Atributos": atributos  # Include the attributes in the insert
         }
         coleccion_personajes.insert_one(datos_ingreso)
@@ -847,6 +921,5 @@ class TypeAccount:
 
 Usuario = TypeAccount()
 Usuario.user.login()
-Usuario.user.VerFichasPersonajes()
-Usuario.user.CrearPersonaje()
 
+Usuario.user.ModificarEquipamiento()
