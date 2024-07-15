@@ -574,7 +574,7 @@ class AtlasGameMaster(AtlasBase):
     
                 while True:
                     try:
-                        eleccion_estado = int(input()) - 1
+                        eleccion_estado = int(input("Que desea modificar:")) - 1
                         if 0 <= eleccion_estado < len(Estados):  
                             estado_seleccionado = Estados[eleccion_estado]  # Get the entire state document
                             id_estado = estado_seleccionado["_id"]
@@ -583,29 +583,34 @@ class AtlasGameMaster(AtlasBase):
                             print("Opción inválida. Por favor, elija un número de la lista.")
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
-    
-                Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
-                if Decision == '3':  # Use string comparison for input
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    nuevadescripcion = input("Nueva Descripcion: ")
-                    resultado = coleccion.update_one({"_id": id_estado},
-                                                     {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
-                    print("Estado Actualizado")
-                elif Decision == '2': 
-                    nuevadescripcion = input("Nueva Descripcion: ")
-                    resultado = coleccion.update_one({"_id": id_estado},
-                                 {"$set": {"Descripcion": nuevadescripcion}})
-                    print("Estado Actualizado")
-                elif Decision == '1':
-                    nuevonombre = input("Nuevo Nombre: ")
-                    resultado = coleccion.update_one({"_id":id_estado}, {"set" : {"Nombre": nuevonombre}})
-                    print("Estado Actualizado")
+                while True:
+                    Decision = input("Desea modificar \n1. Nombre \n2. Descripcion \n3. Ambos?\nQue desea modificar?: ")
+                    if Decision == '3':  # Use string comparison for input
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
+                            else:
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        nuevadescripcion = input("Nueva Descripcion: ")
+                        resultado = coleccion.update_one({"_id": id_estado},
+                                                        {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
+                        print("Estado Actualizado")
+                        break
+                    elif Decision == '2': 
+                        nuevadescripcion = input("Nueva Descripcion: ")
+                        resultado = coleccion.update_one({"_id": id_estado},
+                                    {"$set": {"Descripcion": nuevadescripcion}})
+                        print("Estado Actualizado")
+                        break
+                    elif Decision == '1':
+                        nuevonombre = input("Nuevo Nombre: ")
+                        resultado = coleccion.update_one({"_id":id_estado}, {"set" : {"Nombre": nuevonombre}})
+                        print("Estado Actualizado")
+                        break
+                    else:
+                        print("Ingrese un numero valido (1,2,3)")
 
             case "Poder":
                 coleccion = self.basededatos["Razas"]
@@ -626,35 +631,20 @@ class AtlasGameMaster(AtlasBase):
                             print("Eleccion Invalida, por favor elija un poder valido ")
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
-                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
-                if Decision == "4":
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    nuevadescripcion = input("Ingrese la nueva descripcion")
-                    for i, raza in enumerate(razas):
-                        print(f"{i+1}. {raza['Nombre']}")
-                    
-                    while True: 
-                        try:
-                            eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
-                            if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
-                                break  
+                while True:
+                    Decision = input("Desea modificar  \n1. Nombre \n2. Descripcion \n3. Raza \n4. Todo? \n Que desea modificar?: ")
+                    if Decision == "4":
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
                             else:
-                                print("Opción inválida. Intente de nuevo.")
-                        except ValueError:
-                            print("Por favor, ingrese un número.")
-                    
-                    resultado = collecion.update_one({"_id":id_poder}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
-                    print("Poder Actualizado:")
-                elif Decision == "3":
-                    for i, raza in enumerate(razas):
-                        print(f"{i+1}. {raza['Nombre']}")
-                    
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        nuevadescripcion = input("Ingrese la nueva descripcion")
+                        for i, raza in enumerate(razas):
+                            print(f"{i+1}. {raza['Nombre']}")
+                        
                         while True: 
                             try:
                                 eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
@@ -664,15 +654,38 @@ class AtlasGameMaster(AtlasBase):
                                     print("Opción inválida. Intente de nuevo.")
                             except ValueError:
                                 print("Por favor, ingrese un número.")
-                    resultado = collecion.update_one({"_id": id_poder}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
-                elif Decision == '2':
-                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
-                    resultado = collecion.update_one({"_id": id_poder}, {"$set": {"Descripcion" : nuevadescripcion} })
-                    print("Poder Actualizado")
-                elif Decision == '1':
-                    nuevonombre = input("Ingrese el nombre: ")
-                    resultado = collecion.update_one({"_id" : id_poder}, {'$set' : {"Nombre" : nuevonombre} } )
-                    print("Poder Actualizado")
+                        
+                        resultado = collecion.update_one({"_id":id_poder}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
+                        print("Poder Actualizado:")
+                        break
+                    elif Decision == "3":
+                        for i, raza in enumerate(razas):
+                            print(f"{i+1}. {raza['Nombre']}")
+                        
+                            while True: 
+                                try:
+                                    eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                                    if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                        break  
+                                    else:
+                                        print("Opción inválida. Intente de nuevo.")
+                                except ValueError:
+                                    print("Por favor, ingrese un número.")
+                        resultado = collecion.update_one({"_id": id_poder}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
+                        break
+                    elif Decision == '2':
+                        nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                        resultado = collecion.update_one({"_id": id_poder}, {"$set": {"Descripcion" : nuevadescripcion} })
+                        print("Poder Actualizado")
+                        break
+                    elif Decision == '1':
+                        nuevonombre = input("Ingrese el nombre: ")
+                        resultado = collecion.update_one({"_id" : id_poder}, {'$set' : {"Nombre" : nuevonombre} } )
+                        print("Poder Actualizado")
+                        break
+                    else:
+                        print("Ingrese un Numero Valido")
+
             case "Habilidades":
                 coleccion = self.basededatos["Razas"]
                 razas = list(coleccion.find({},{"Nombre":1}))
@@ -692,53 +705,61 @@ class AtlasGameMaster(AtlasBase):
                             print("Eleccion Invalida, por favor elija una habilidad valida ")
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
-                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Raza 4) Todo? ")
-                if Decision == "4":
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    nuevadescripcion = input("Ingrese la nueva descripcion")
-                    for i, raza in enumerate(razas):
-                        print(f"{i+1}. {raza['Nombre']}")
-                    
-                    while True: 
-                        try:
-                            eleccion_raza = int(input("Elija la raza a la que va a pertenecer la habilidad")) - 1
-                            if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
-                                break  
+                while True:
+                    Decision = input("Desea modificar  \n 1. Nombre \n 2. Descripcion 3. Raza 4. Todo? \nQue desea modificar?: ")
+                    if Decision == "4":
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
                             else:
-                                print("Opción inválida. Intente de nuevo.")
-                        except ValueError:
-                            print("Por favor, ingrese un número.")
-                    
-                    resultado = collecion.update_one({"_id":id_habilidad}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
-                    print("Habilidad Actualizada:")
-                elif Decision == "3":
-                    for i, raza in enumerate(razas):
-                        print(f"{i+1}. {raza['Nombre']}")
-                    
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        nuevadescripcion = input("Ingrese la nueva descripcion")
+                        for i, raza in enumerate(razas):
+                            print(f"{i+1}. {raza['Nombre']}")
+                        
                         while True: 
                             try:
-                                eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                                eleccion_raza = int(input("Elija la raza a la que va a pertenecer la habilidad")) - 1
                                 if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
                                     break  
                                 else:
                                     print("Opción inválida. Intente de nuevo.")
                             except ValueError:
                                 print("Por favor, ingrese un número.")
-                    resultado = collecion.update_one({"_id": id_habilidad}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
-                elif Decision == '2':
-                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
-                    resultado = collecion.update_one({"_id": id_habilidad}, {"$set": {"Descripcion" : nuevadescripcion} })
-                    print("Habilidad Actualizada")
-                elif Decision == '1':
-                    nuevonombre = input("Ingrese el nombre: ")
-                    resultado = collecion.update_one({"_id" : id_habilidad}, {'$set' : {"Nombre" : nuevonombre} } )
-                    print("Habilidad Actualizada")
+                        
+                        resultado = collecion.update_one({"_id":id_habilidad}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion,"Raza": razas[eleccion_raza]['_id'] }})
+                        print("Habilidad Actualizada:")
+                        break
+                    elif Decision == "3":
+                        for i, raza in enumerate(razas):
+                            print(f"{i+1}. {raza['Nombre']}")
+                        
+                            while True: 
+                                try:
+                                    eleccion_raza = int(input("Elija la raza a la que va a pertenecer el poder")) - 1
+                                    if 0 <= eleccion_raza < len(razas) or eleccion_raza == -1:
+                                        break  
+                                    else:
+                                        print("Opción inválida. Intente de nuevo.")
+                                except ValueError:
+                                    print("Por favor, ingrese un número.")
+                        resultado = collecion.update_one({"_id": id_habilidad}, {"$set" : {"Raza" : razas[eleccion_raza]['_id']} })
+                        break
+                    elif Decision == '2':
+                        nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                        resultado = collecion.update_one({"_id": id_habilidad}, {"$set": {"Descripcion" : nuevadescripcion} })
+                        print("Habilidad Actualizada")
+                        break
+                    elif Decision == '1':
+                        nuevonombre = input("Ingrese el nombre: ")
+                        resultado = collecion.update_one({"_id" : id_habilidad}, {'$set' : {"Nombre" : nuevonombre} } )
+                        print("Habilidad Actualizada")
+                        break
+                    else:
+                        print("Ingrese un numero valido")
+
             case "Razas":
                 coleccion = self.basededatos["Razas"]
                 razas = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
@@ -758,35 +779,41 @@ class AtlasGameMaster(AtlasBase):
                             print("Opción inválida. Por favor, elija un número de la lista.")
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
-    
-                Decision = input("Desea modificar \n1). Nombre \n 2). Descripcion \n 3).Ambos?")
-                if Decision == '3':  # Use string comparison for input
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    nuevadescripcion = input("Nueva Descripcion: ")
-                    resultado = coleccion.update_one({"_id": raza_id},
-                                                     {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
-                    print("Raza Actualizada")
-                elif Decision == '2': 
-                    nuevadescripcion = input("Nueva Descripcion: ")
-                    resultado = coleccion.update_one({"_id": raza_id},
-                                 {"$set": {"Descripcion": nuevadescripcion}})
-                    print("Raza Actualizada")
-                elif Decision == '1':
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
-                    print("Raza Actualizada")
+                while True:
+                    Decision = input("Desea modificar \n1. Nombre \n2. Descripcion \n3. Ambos? \nQue desea modificar?")
+                    if Decision == '3':  # Use string comparison for input
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
+                            else:
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        nuevadescripcion = input("Nueva Descripcion: ")
+                        resultado = coleccion.update_one({"_id": raza_id},
+                                                        {"$set": {"Nombre": nuevonombre, "Descripcion": nuevadescripcion}})
+                        print("Raza Actualizada")
+                        break
+                    elif Decision == '2': 
+                        nuevadescripcion = input("Nueva Descripcion: ")
+                        resultado = coleccion.update_one({"_id": raza_id},
+                                    {"$set": {"Descripcion": nuevadescripcion}})
+                        print("Raza Actualizada")
+                        break
+                    elif Decision == '1':
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
+                            else:
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        resultado = coleccion.update_one({"_id":raza_id}, {"set" : {"Nombre": nuevonombre}})
+                        print("Raza Actualizada")
+                        break
+                    else:
+                        print("Ingrese un numero valido")
+
             case "Equipamiento":
                 self.equipamiento_personaje = {
                         "Cabeza": "",
@@ -813,76 +840,80 @@ class AtlasGameMaster(AtlasBase):
                             print("Eleccion Invalida, por favor elija una habilidad valida ")
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
-                Decision = input("Desea modificar  \n 1).Nombre \n 2.) Descripcion 3). Ranura 4) Todo? ")
-                if Decision == "4":
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    nuevo_descripcion = input("Ingrese la nueva Descripcion ")
-
-                    equipamiento_mod = list(self.equipamiento_personaje.keys())
-                    for i, equipameinto in enumerate(equipamiento_mod):
-                        print(f"{i+1}. {equipameinto}")
-
-                    while True:
-                        try:
-                            destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
-                            if 0 <= destino < len( equipamiento_mod):
-                                Ranura = equipamiento_mod[destino]
-                                break
+                while True:
+                    Decision = input("Desea modificar  \n 1). Nombre \n 2. Descripcion \n3. Ranura \n4. Todo?\nQue desea Modificar?: ")
+                    if Decision == "4":
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
                             else:
-                                print("Número inválido. Inténtalo de nuevo.")
-                        except ValueError:
-                            print("Ingresa un número válido.")
-                    resultado = collecion.update_one({"_id":id_equipamiento}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevo_descripcion,"Ranura": Ranura }})
-                    print("Equipamiento Actualizado:")
-                elif Decision == "3":
-                    equipamiento_mod = list(self.equipamiento_personaje.keys())
-                    for i, equipameinto in enumerate(equipamiento_mod):
-                        print(f"{i+1}. {equipameinto}")
-
-                    while True:
-                        try:
-                            destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
-                            if 0 <= destino < len( equipamiento_mod):
-                                Ranura = equipamiento_mod[destino]
+                                print(f"El nombre '{nuevonombre}' está correcto.")
                                 break
+                        nuevo_descripcion = input("Ingrese la nueva Descripcion ")
+
+                        equipamiento_mod = list(self.equipamiento_personaje.keys())
+                        for i, equipameinto in enumerate(equipamiento_mod):
+                            print(f"{i+1}. {equipameinto}")
+
+                        while True:
+                            try:
+                                destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
+                                if 0 <= destino < len( equipamiento_mod):
+                                    Ranura = equipamiento_mod[destino]
+                                    break
+                                else:
+                                    print("Número inválido. Inténtalo de nuevo.")
+                            except ValueError:
+                                print("Ingresa un número válido.")
+                        resultado = collecion.update_one({"_id":id_equipamiento}, {"$set": {"Nombre": nuevonombre, "Descripcion": nuevo_descripcion,"Ranura": Ranura }})
+                        print("Equipamiento Actualizado:")
+                    elif Decision == "3":
+                        equipamiento_mod = list(self.equipamiento_personaje.keys())
+                        for i, equipameinto in enumerate(equipamiento_mod):
+                            print(f"{i+1}. {equipameinto}")
+
+                        while True:
+                            try:
+                                destino = int(input("Elija la Ranura a la que va a pertenecer el equipamiento? (Escribe un número): ")) - 1
+                                if 0 <= destino < len( equipamiento_mod):
+                                    Ranura = equipamiento_mod[destino]
+                                    break
+                                else:
+                                    print("Número inválido. Inténtalo de nuevo.")
+                            except ValueError:
+                                print("Ingresa un número válido.")
+                        resultado = collecion.update_one({"_id": id_equipamiento}, {"$set" : {"Ranura" : Ranura} })
+                    elif Decision == '2':
+                        nuevadescripcion = input("Ingrese la nueva Descripcion: ")
+                        resultado = collecion.update_one({"_id": id_equipamiento}, {"$set": {"Descripcion" : nuevadescripcion} })
+                        print("Habilidad Actualizada")
+                    elif Decision == '1':
+                        while True:
+                            nuevonombre = input("Ingrese el nombre: ")
+                            if any(caracter in string.punctuation for caracter in nuevonombre):
+                                print("No se permiten caracteres especiales.")
                             else:
-                                print("Número inválido. Inténtalo de nuevo.")
-                        except ValueError:
-                            print("Ingresa un número válido.")
-                    resultado = collecion.update_one({"_id": id_equipamiento}, {"$set" : {"Ranura" : Ranura} })
-                elif Decision == '2':
-                    nuevadescripcion = input("Ingrese la nueva Descripcion: ")
-                    resultado = collecion.update_one({"_id": id_equipamiento}, {"$set": {"Descripcion" : nuevadescripcion} })
-                    print("Habilidad Actualizada")
-                elif Decision == '1':
-                    while True:
-                        nuevonombre = input("Ingrese el nombre: ")
-                        if any(caracter in string.punctuation for caracter in nuevonombre):
-                            print("No se permiten caracteres especiales.")
-                        else:
-                            print(f"El nombre '{nuevonombre}' está correcto.")
-                            break
-                    resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
-                    print("Habilidad Actualizada")                
+                                print(f"El nombre '{nuevonombre}' está correcto.")
+                                break
+                        resultado = collecion.update_one({"_id" : id_equipamiento}, {'$set' : {"Nombre" : nuevonombre} } )
+                        print("Habilidad Actualizada")  
+                    else:
+                        print("Ingrese un numero valido")    
+
     def Eliminar(self,Objeto):
         match Objeto:
             case "Estado":
                 coleccion = self.basededatos["Estados"]
                 Estados = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
     
-                print("Estados Existentes: (Seleccione el estado que va a elimibar)")
+                print("Estados Existentes: (Seleccione el estado que va a eliminar)")
                 for i, estado in enumerate(Estados):
                     print(f"{i+1}. {estado['Nombre']}")
     
                 while True:
                     try:
-                        eleccion_estado = int(input()) - 1
+                        eleccion_estado = int(input("Cual desea eliminar: ")) - 1
                         if 0 <= eleccion_estado < len(Estados):  
                             estado_seleccionado = Estados[eleccion_estado]  # Get the entire state document
                             id_estado = estado_seleccionado["_id"]
@@ -892,6 +923,7 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : id_estado})
+                print("El estado se ha eliminado")
             case "Poder":
                 collecion = self.basededatos["Poderes"]
                 Poderes = list(collecion.find({},{"_id":1,"Nombre": 1}))
@@ -900,7 +932,7 @@ class AtlasGameMaster(AtlasBase):
                     print(f"{i+1}. {poder['Nombre']}")
                 while True:
                     try:
-                        eleccion_poder = int(input()) -1
+                        eleccion_poder = int(input("Cual desea eliminar: ")) -1
                         if 0 <= eleccion_poder < len(Poderes):
                             poder_seleccionado = Poderes[eleccion_poder]
                             id_poder = poder_seleccionado["_id"]
@@ -910,6 +942,7 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
                 eliminacion = coleccion.delete_one({"_id" : id_poder})
+                print("El poder se ha eliminado")
             case "Habilidades":
                 collecion = self.basededatos["Habilidades"]
                 Habilidades = list(collecion.find({},{"_id":1,"Nombre": 1}))
@@ -918,7 +951,7 @@ class AtlasGameMaster(AtlasBase):
                     print(f"{i+1}. {habilidad['Nombre']}")
                 while True:
                     try:
-                        eleccion_habilidad = int(input()) -1
+                        eleccion_habilidad = int(input("Cual desea eliminar: ")) -1
                         if 0 <= eleccion_habilidad < len(Habilidades):
                             habilidad_seleccionada = Habilidades[eleccion_habilidad]
                             id_habilidad = habilidad_seleccionada["_id"]
@@ -928,6 +961,7 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un numero valido")
                     eliminacion = coleccion.delete_one({"_id" : id_habilidad})
+                print("La habilidad se ha eliminado")
             case "Razas":
                 coleccion = self.basededatos["Razas"]
                 razas = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
@@ -938,7 +972,7 @@ class AtlasGameMaster(AtlasBase):
     
                 while True:
                     try:
-                        eleccion_raza = int(input()) - 1
+                        eleccion_raza = int(input("Cual desea eliminar: ")) - 1
                         if 0 <= eleccion_raza < len(razas):  
                             raza_seleccionada = razas[eleccion_raza]  # Get the entire state document
                             raza_id = raza_seleccionada["_id"]
@@ -948,6 +982,7 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_id})
+                print("La raza se ha eliminado")
             case "Equipamiento":
                 coleccion = self.basededatos["Equipamiento"]
                 Equipamientos = list(coleccion.find({}, {"_id": 1, "Nombre": 1}))
@@ -958,7 +993,7 @@ class AtlasGameMaster(AtlasBase):
     
                 while True:
                     try:
-                        eleccion_equipamiento = int(input()) - 1
+                        eleccion_equipamiento = int(input("Cual desea eliminar: ")) - 1
                         if 0 <= eleccion_equipamiento < len(Equipamientos):  
                             equipamiento_seleccionado = Equipamientos[eleccion_equipamiento]  # Get the entire state document
                             raza_equipamiento = equipamiento_seleccionado["_id"]
@@ -968,6 +1003,7 @@ class AtlasGameMaster(AtlasBase):
                     except ValueError:
                         print("Por favor, ingrese un número válido.")
                 eliminacion = coleccion.delete_one({"_id" : raza_equipamiento})
+                print("El equipamiento se ha eliminado")
             
 
 class TypeAccount:
@@ -993,7 +1029,4 @@ class TypeAccount:
 
 
 Usuario = TypeAccount()
-Usuario.user.login()
-Usuario.user.CrearPersonaje()
-
-Usuario.user.ModificarEquipamiento()
+Usuario.user.Eliminar("Equipamiento")
