@@ -1287,3 +1287,8 @@ class TypeAccount:
                 break  
             else:
                 print("Opción inválida. Intenta de nuevo.")
+    def obtener_cuenta(self):
+        if isinstance(self.user, AtlasCliente):
+            return "Jugador"
+        elif isinstance(self.user, AtlasGameMaster):
+            return "GameMaster"

@@ -8,7 +8,6 @@ url = "mongodb+srv://<username>:<password>@cluster0.rlqm0qg.mongodb.net/"
 url1 = "mongodb+srv://JugadoresPorFavorFunciona:4fmRjvvCxji3QllQ@cluster0.rlqm0qg.mongodb.net/"
 
 def menu_cliente(cliente):
-    cliente.user.login()
     while True:
         print("\n╔═══════════════════════════════╗")
         print("║     ✨ Menú del Jugador ✨    ║")
@@ -99,3 +98,10 @@ def menu_GameMaster(GameMaster):
         else:
             print("Opción inválida.")
 
+Usuario = TypeAccount()
+
+if Usuario.obtener_cuenta() == "Jugador":
+    Usuario.user.login()
+    menu_cliente(Usuario)
+else:
+    menu_GameMaster(Usuario)
