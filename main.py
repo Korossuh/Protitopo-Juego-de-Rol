@@ -59,7 +59,6 @@ def menu_GameMaster(GameMaster):
         elif opcion == '5':
             GameMaster.user.AgregarRaza()
         elif opcion == '6':
-            while True:
                 Desicion = input("¿Qué desea modificar?\n1. Estado \n2. Poder \n3. Habilidad \n4. Raza \n.5 Equipamiento \nCual desea escoger?: ")
                 if Desicion =='5':
                     GameMaster.user.Modificar("Equipamiento")
@@ -75,7 +74,6 @@ def menu_GameMaster(GameMaster):
                     print("Ingrese un numero valido")
 
         elif opcion == '7':
-            while True:
                 Desicion = input("¿Qué desea Eliminar?\n1. Estado \n2. Poder \n3. Habilidad \n4. Raza \n.5 Equipamiento \nCual desea escoger?: ")
                 if Desicion =='5':
                     GameMaster.user.Eliminar("Equipamiento")
