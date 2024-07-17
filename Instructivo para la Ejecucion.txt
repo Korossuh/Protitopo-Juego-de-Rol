@@ -1,0 +1,6 @@
+Lo principal es lo siguiente, si hay que probar las funciones del Jugador, hay que ingresar con las siuguientes credenciales:
+Nombre:Maximiliano
+Contraseña:1234
+Si quiere ingresar como GM: 
+Nombre:GameMaster
+contraseña:qh20Fpw4QAeX0uhd (NO SE PUEDE PEGAR Y COPIAR, HAY QUE INGRESAR A MANO)
