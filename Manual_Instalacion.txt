@@ -18,15 +18,4 @@ Instalar Librerias de Python (‘Pymongo’,’bcrypt’) escribir esto en la te
 “pip install brcypt”
 “pip install getpass” 
 
-
-
-
-
-
-
-
-
-
-
-
 Ejecutar el archivo Main.py con Python desde Visual Studio Code ya sea presionando el botón arriba a la derecha o escribiendo en la terminal “python main.py” verificando que la terminal este en la carpeta en donde está almacenado el archivo . 
