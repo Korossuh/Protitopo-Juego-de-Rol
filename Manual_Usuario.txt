@@ -1,0 +1,37 @@
+Manual de Usuario
+- Interfaz Inicial General
+  En esta interfaz podremos visualizar el tipo de usuario al cual queremos ingresar ya sea como jugador o como Game Master, Dependiendo de cual elijas serás redirigido a tu Login correspondiente.
+- Interfaz Login 
+Aquí las interfaces se dividen ya que dependiendo de tu tipo de usuario al cual vas a ingresar tienes uno distinto para cada uno. Esto de manera en que haya un mayor orden dentro de nuestro sistema.
+- Main 
+En esta parte tenemos a la interfaz de la cual podremos decidir que hacer en nuestro sistema, esto de manera ordenada y intuitivo para los usuarios
+
+Interfazes para Jugador
+
+- Crear Personaje
+Ahora visualizamos un formulario completo para la creación de personaje empezando por preguntar el nombre, luego la raza, habilidades poderes y equipamientos esto con el fin de que el personaje este completo para comenzar.
+- Modificar Equipamiento
+En esta sección el jugador podrá modificar el equipamiento de su personaje escogiendo el lugar que quiere cambiar y luego seleccionando el equipable.
+- Visualizar Ficha Personaje
+Acá el jugador podrá visualizar la ficha de un personaje con toda su información como Nombre, HitPoints, Raza, Nivel, Estado, Habilidad, Equipamiento, Poderes y sus atributos estos con el fin de dar toda la información para que el jugador pueda verla.
+
+Interfazes para Game Master
+
+- Agregar Estado
+Esta Interfaz nos Sirve para agregar estados para los personajes, esto con el fin de poder controlar los posibles estados para el juego, esto debe rellenar un formulario que nos pedira distintos parametros.
+- Agregar Poder 
+Por Aqui podremos agregar poderes que al igual que estado estan destinados a los personajes, y tenindo diferente tipo de información para rellenar.
+- Agregar Habilidad
+Acá el Game Master puede agregar habilidades que el desee con el fin de darle más variedad al juego dependiendo de lo que el quiera hacer, esto con el fin de tener un mejor ámbito de Juego
+- Agregar Equipamiento
+Podremos en esta interfaz agregar Equipamientos nuevos mediante un formulario el cual tiene diferentes parametros a completar esto con el fin de que el equipamiento sea claro a la hora de estar dentro del juego
+- Agregar Raza
+La interfaz sirve para mostrar el formulario para agregar una nueva raza la cual puede ser agregada a gusto del Game Master, siempre y cuando rellene los parametros
+- Modificar
+En esta interfaz podremos modificar todo lo que esta creado en la base de datos, ya sea Estado, Poder, Habilidad, Equipamiento y Raza, mostrando como siempre un formulario a rellenar por el Game Master
+- Eliminar
+En esta interfaz podremos Eliminar todo lo que esta creado en la base de datos, ya sea Estado, Poder, Habilidad, Equipamiento y Raza, esto seleccionandolo y eliminandolo permanentemente
+- Ver Partida
+Acá podremos ver un resumen de las partidas esto con el fin de poder saber información actual de las partidas esto para que el Game Master pueda trabajar con esta información como el lo desee
+- Modificar Personaje
+El Game Master Podra modificar todo tipo de personaje y los parametros que el quiera con excepción de todo lo seleccionado por el Jugador, como Nombre, Raza, etc.

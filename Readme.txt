@@ -1,1 +1,0 @@
-Hola bienvenido al repositorio de prototipo juego de rol en el cual estamos salvando el semestre un saludo cracks 
