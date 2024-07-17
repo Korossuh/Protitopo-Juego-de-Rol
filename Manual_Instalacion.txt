@@ -1,0 +1,32 @@
+Existena 2 maneras de Probar nuestro sistema, un archivo ejecutable.
+O seguir los siguientes pasos
+
+Existen requisitos previos para la visualización del proyecto. Son adjuntados a continuación:
+Visual Studio Code (IDE)
+Instalar Python 3.9.1
+Instalar Librería de Pymongo
+Instalar Librería de bcrypt
+Repositorio “clonado” desde GitHub ya sea con comando o descargándolo del repositorio.
+Para poder ejecutar y así ver el proyecto en sí, hay que seguir una serie de pasos teniendo en cuenta los siguientes comandos y acciones:
+“Clonar” el repositorio para obtenerlo de forma local con el siguiente comando:
+	“ git clone https://github.com/Korossuh/Protitopo-Juego-de-Rol “ 
+Descargar el Repositorio manualmente desde GitHub:
+                      “ https://github.com/Korossuh/Protitopo-Juego-de-Rol “ 
+Abrirlo desde Visual Studio Code y Abrir terminal.
+Instalar Librerias de Python (‘Pymongo’,’bcrypt’) escribir esto en la terminal:
+“pip install Pymongo” 
+“pip install brcypt”
+“pip install getpass” 
+
+
+
+
+
+
+
+
+
+
+
+
+Ejecutar el archivo Main.py con Python desde Visual Studio Code ya sea presionando el botón arriba a la derecha o escribiendo en la terminal “python main.py” verificando que la terminal este en la carpeta en donde está almacenado el archivo . 
